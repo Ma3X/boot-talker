@@ -8,7 +8,7 @@ if [[ "$TARGET" == ""  || "$PREFIX_REAL" == "" || "$PREFIX_BOOT" == "" ]] ; then
 fi
 
 #sources="binutils-2.22 gcc-4.7.3 gdb-7.6 newlib-1.20.0"
-sources="binutils-2.24 gcc-4.9.0 gdb-7.7.1 newlib-2.1.0"
+sources="binutils-2.24 gcc-4.9.0 gdb-7.7.1 newlib-2.0.0"
 
 # check for sources before we go on.
 for src in $sources; do
