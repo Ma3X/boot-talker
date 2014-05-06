@@ -1,0 +1,3 @@
+cloned from cool project:  https://github.com/ndim/arm-newlib-gcc-toolchain-builder
+
+also:                      https://github.com/laswick/arm-toolchain
