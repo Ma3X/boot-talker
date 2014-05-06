@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+
+. ../test.env
+echo $PATH
+OUT=./out
+
+mkdir -p $OUT
+test -d $OUT
+
+arm-none-eabi-as -meabi=5 ./a.S -o $OUT/a.o
+arm-none-eabi-ld $OUT/a.o -T ./a.lds -o $OUT/a.elf
+arm-none-eabi-objcopy -O binary $OUT/a.elf $OUT/a.bin
+arm-none-eabi-objdump $OUT/a.elf --disassemble-all > $OUT/a.dis
