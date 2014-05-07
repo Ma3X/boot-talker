@@ -1,0 +1,30 @@
+for compile mtk-firmware in osmocom-bb commit:
+   commit a903b3c1ee27047c79728b18ff6340d23d1aad2e
+   Author: Steve Markgraf <steve@steve-m.de>
+   Date:   Sun Dec 29 20:33:26 2013 +0100
+
+---------------------------------------------------------------------
+
+git clone git://git.osmocom.org/osmocom-bb
+cd osmocom-bb
+patch -p0 < ../boot-talker/inst/patches/osmocom-bb/mtk-firmware.patch
+. ../boot-talker/inst/patches/osmocom-bb/toolchain.env
+cd src
+make
+
+---------------------------------------------------------------------
+
+cd osmocom-bb/src
+make mtk-firmware
+
+---------------------------------------------------------------------
+
+cd osmocom-bb/src
+make -C target/firmware -f Makefile.mtk CROSS_COMPILE=arm-none-eabi-
+
+or
+
+cd osmocom-bb/src/target/firmware
+make -f Makefile.mtk CROSS_COMPILE=arm-none-eabi-
+
+---------------------------------------------------------------------

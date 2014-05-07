@@ -3,9 +3,9 @@
 set -e
 
 . ../test.env
-echo $PATH
-OUT=./out
+#echo $PATH
 
+OUT=./out
 mkdir -p $OUT
 test -d $OUT
 
