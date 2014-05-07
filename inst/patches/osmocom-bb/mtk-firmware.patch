@@ -1,0 +1,69 @@
+diff --git src/host/layer23/src/mobile/gsm411_sms.c src/host/layer23/src/mobile/gsm411_sms.c
+index 655fe53..43720f1 100644
+--- src/host/layer23/src/mobile/gsm411_sms.c
++++ src/host/layer23/src/mobile/gsm411_sms.c
+@@ -653,10 +653,10 @@ static int gsm411_tx_sms_submit(struct osmocom_ms *ms, const char *sms_sca,
+ 		sms_free(sms);
+ 		return -ENOMEM;
+ 	}
+-	gsm411_smc_init(&trans->sms.smc_inst, transaction_id, 0,
+-		gsm411_mn_recv, gsm411_mm_send);
+-	gsm411_smr_init(&trans->sms.smr_inst, transaction_id, 0,
+-		gsm411_rl_recv, gsm411_mn_send);
++	//gsm411_smc_init(&trans->sms.smc_inst, transaction_id, 0,
++	//	gsm411_mn_recv, gsm411_mm_send);
++	//gsm411_smr_init(&trans->sms.smr_inst, transaction_id, 0,
++	//	gsm411_rl_recv, gsm411_mn_send);
+ 	trans->sms.sms = sms;
+ 	trans->sms.sapi = UM_SAPI_SMS;
+ 
+@@ -907,10 +907,10 @@ int gsm411_rcv_sms(struct osmocom_ms *ms, struct msgb *msg)
+ 					mmh->ref);
+ 		if (!trans)
+ 			return -ENOMEM;
+-		gsm411_smc_init(&trans->sms.smc_inst, trans->transaction_id, 0,
+-			gsm411_mn_recv, gsm411_mm_send);
+-		gsm411_smr_init(&trans->sms.smr_inst, trans->transaction_id, 0,
+-			gsm411_rl_recv, gsm411_mn_send);
++		//gsm411_smc_init(&trans->sms.smc_inst, trans->transaction_id, 0,
++		//	gsm411_mn_recv, gsm411_mm_send);
++		//gsm411_smr_init(&trans->sms.smr_inst, trans->transaction_id, 0,
++		//	gsm411_rl_recv, gsm411_mn_send);
+ 		trans->sms.sapi = mmh->sapi;
+ 	}
+ 
+diff --git src/target/firmware/Makefile.inc src/target/firmware/Makefile.inc
+index 9049898..cb38b4d 100644
+--- src/target/firmware/Makefile.inc
++++ src/target/firmware/Makefile.inc
+@@ -167,6 +167,7 @@ $(foreach lbr,$(LIBRARIES),$(eval $(call LIBRARY_template,$(lbr))))
+ 
+ .PHONY: all
+ all: $(ALL_DEPS) $(ALL_APPS:.elf=.bin) $(ALL_APPS:.elf=.size)
++	@echo "ALL_APPS: " + ${ALL_APPS}
+ 
+ .PHONY: depend
+ depend: $(ALL_DEPS)
+diff --git src/target/firmware/Makefile.mtk src/target/firmware/Makefile.mtk
+index 30fa2fc..0e21f16 100644
+--- src/target/firmware/Makefile.mtk
++++ src/target/firmware/Makefile.mtk
+@@ -4,14 +4,14 @@ BOARDS?=mt62xx
+ # List of all applications (meant to be overridden on command line)
+ APPLICATIONS?=loader_mtk
+ 
+-mtkram_LDS=board/mediatek/ram.lds
+-mtkram_OBJS=board/mediatek/start.ram.o
++ENV_mtkram_LDS=board/mediatek/ram.lds
++ENV_mtkram_OBJS=board/mediatek/start.ram.o
+ 
+ mtk_COMMON_OBJS=board/mediatek/uart.o
+ 
+ # Mediatek MT62xx
+-mt62xx_OBJS=$(mtk_COMMON_OBJS) board/mt62xx/init.o
+-mt62xx_ENVIRONMENTS=mtkram
++BOARD_mt62xx_OBJS=$(mtk_COMMON_OBJS) board/mt62xx/init.o
++BOARD_mt62xx_ENVIRONMENTS=mtkram
+ 
+ # Global include path
+ INCLUDES=-Iinclude/ -I../../../include -I../../shared/libosmocore/include
