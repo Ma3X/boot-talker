@@ -1,0 +1,14 @@
+make -C target/firmware -f Makefile.mtk CROSS_COMPILE=arm-none-eabi-
+
+  CC     apps/loader_mtk/main.o
+  CC     board/mediatek/uart.o
+  CC     board/mt62xx/init.o
+  CC     board/mediatek/start.ram.o
+  CC     board/mt62xx/loader_mtk.mtkram.manifest.o
+  LD     board/mt62xx/loader_mtk.mtkram.elf
+  OBJ    board/mt62xx/loader_mtk.mtkram.bin
+  SIZE   board/mt62xx/loader_mtk.mtkram.size
+   text	   data	    bss	    dec	    hex	filename
+  12733	    292	  22540	  35565	   8aed	board/mt62xx/loader_mtk.mtkram.elf
+
+ALL_APPS:  + board/mt62xx/loader_mtk.mtkram.elf
