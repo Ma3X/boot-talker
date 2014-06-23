@@ -11,9 +11,28 @@ ftp://ftp.denx.de/pub/u-boot/
 ftp://ftp.denx.de/pub/u-boot/u-boot-2014.04.tar.bz2
 ftp://ftp.denx.de/pub/u-boot/u-boot-2010.03.tar.bz2
 
+git clone git://git.osmocom.org/uboot-mt623x
+
    source ../test.env
 Or
    . ../test.env
+
+--
+
+uboot-2010.03:
+make versatile
+
+uboot-mt623x:
+make sciphone_g2_config
+make
+
+http://winfred-lu.blogspot.ru/2011/12/arm-u-boot-on-qemu.html
+
+$ make versatileqemu_config
+$ make
+$ qemu-system-arm -nographic -M versatilepb -m 128 -kernel u-boot
+
+--
 
 Grab the U-Boot source code from the U-Boot FTP site and decompress it. Go inside the created directory and run:
 

@@ -1,5 +1,5 @@
 #!/bin/bash
 
 #qemu-system-arm -M versatilepb -m 128M -nographic -kernel ./u-boot-2014.04/u-boot.bin
-qemu-system-arm -M versatilepb -m 128M -nographic -kernel ./u-boot-2010.03/u-boot.bin
+qemu-system-arm -M versatilepb -m 128M -nographic -usb -kernel ./u-boot-2010.03/u-boot.bin
 #qemu-system-arm -M versatilepb -m 128M -nographic -kernel ./uboot-mt623x/u-boot-nand.bin
