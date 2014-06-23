@@ -11,6 +11,10 @@ ftp://ftp.denx.de/pub/u-boot/
 ftp://ftp.denx.de/pub/u-boot/u-boot-2014.04.tar.bz2
 ftp://ftp.denx.de/pub/u-boot/u-boot-2010.03.tar.bz2
 
+   source ../test.env
+Or
+   . ../test.env
+
 Grab the U-Boot source code from the U-Boot FTP site and decompress it. Go inside the created directory and run:
 
    make versatilepb_config ARCH=arm CROSS_COMPILE=arm-none-eabi-
