@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Building U-Boot:
+#
+#   export CROSS_COMPILE=arm-linux-gnueabi-
+#   make sciphone_g2_config
+#   make
+
+qemu-system-arm -M versatilepb -m 128M -nographic -kernel ./uboot-mt623x/u-boot-nand.bin
+
+#qemu-system-arm -M versatilepb -m 128M -nographic -kernel ./u-boot-2014.04/u-boot.bin
+#qemu-system-arm -M versatilepb -m 128M -nographic -kernel ./u-boot-2010.03/u-boot.bin
+
+# If QEMU run ->  Error -> Use for crear console:  reset

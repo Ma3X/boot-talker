@@ -1,0 +1,8 @@
+[color]
+	status = auto
+	branch = auto
+	interactive = auto
+	diff = auto
+[user]
+	name = Rus Selin
+	email = xpyct.am.83@gmail.com
