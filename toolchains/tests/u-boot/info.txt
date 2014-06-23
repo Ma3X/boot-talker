@@ -1,0 +1,34 @@
+http://balau82.wordpress.com/2010/03/10/u-boot-for-arm-on-qemu/
+http://balau82.wordpress.com/2010/04/12/booting-linux-with-u-boot-on-qemu-arm/
+http://balau82.wordpress.com/2010/12/16/using-newlib-in-arm-bare-metal-programs/
+http://balau82.wordpress.com/2010/03/22/compiling-linux-kernel-for-qemu-arm-emulator/
+
+http://ru.wikipedia.org/wiki/Das_U-Boot
+http://www.gentoo.ru/node/21898
+http://elinux.org/RPi_U-Boot
+
+ftp://ftp.denx.de/pub/u-boot/
+ftp://ftp.denx.de/pub/u-boot/u-boot-2014.04.tar.bz2
+ftp://ftp.denx.de/pub/u-boot/u-boot-2010.03.tar.bz2
+
+Grab the U-Boot source code from the U-Boot FTP site and decompress it. Go inside the created directory and run:
+
+   make versatilepb_config ARCH=arm CROSS_COMPILE=arm-none-eabi-
+
+This command configures U-Boot to be compiled for the VersatilePB board. Then compile and build with:
+
+   make all ARCH=arm CROSS_COMPILE=arm-none-eabi-
+
+The compilation will create a u-boot.bin binary image. To simulate, run:
+
+   qemu-system-arm -M versatilepb -m 128M -nographic -kernel u-boot.bin
+
+The U-Boot prompt should appear:
+U-Boot 1.1.6 (Mar 3 2010 - 21:46:06)
+DRAM: 0 kB
+Flash: 0 kB
+*** Warning – bad CRC, using default environment
+In: serial
+Out: serial
+Err: serial
+Versatile #
