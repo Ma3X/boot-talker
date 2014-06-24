@@ -24,6 +24,12 @@ https://sourceware.org/gdb/onlinedocs/gdb/Python-API.html#Python-API
 http://spyderlib.googlecode.com/hg/spyderlib/widgets/externalshell/start_ipython_kernel.py
 http://stackoverflow.com/questions/11513132/embedding-ipython-qt-console-in-a-pyqt-application
 http://nullege.com/codes/search/IPython.zmq.ipkernel.IPKernelApp
+http://ipython.org/install.html
+  sudo apt-get install ipython-notebook
+If you already have Python all set up, you can get IPython with pip:
+  pip install ipython
+Or if you want to also get the dependencies for the IPython notebook:
+  pip install ipython[notebook]
 
 Nemiver
 https://wiki.gnome.org/Apps/Nemiver
