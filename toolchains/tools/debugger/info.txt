@@ -8,6 +8,17 @@ https://github.com/snarez/voltron
 http://ho.ax/posts/2013/06/voltron-a-hacky-ui-for-gdb/
 http://www.cyberhades.com/2013/07/12/voltron-tmux-gdb-sexy/
 
+gdbipy
+https://github.com/zardus/gdb_woo/blob/master/gdbipy.py
+http://blog.scottt.tw/2012_01_01_archive.html
+http://blog.scottt.tw/2012/01/exploring-gdb-python-api-with-ipython_31.html
+http://blog.scottt.tw/2012/02/backporting-l-from-gdb-74-using-python.html
+http://www.rtems.org/wiki/index.php/GDB_Python
+https://sourceware.org/gdb/onlinedocs/gdb/Python-API.html#Python-API
+http://spyderlib.googlecode.com/hg/spyderlib/widgets/externalshell/start_ipython_kernel.py
+http://stackoverflow.com/questions/11513132/embedding-ipython-qt-console-in-a-pyqt-application
+http://nullege.com/codes/search/IPython.zmq.ipkernel.IPKernelApp
+
 Nemiver
 https://wiki.gnome.org/Apps/Nemiver
 https://git.gnome.org/browse/nemiver/
