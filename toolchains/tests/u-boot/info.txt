@@ -11,6 +11,11 @@ ftp://ftp.denx.de/pub/u-boot/
 ftp://ftp.denx.de/pub/u-boot/u-boot-2014.04.tar.bz2
 ftp://ftp.denx.de/pub/u-boot/u-boot-2010.03.tar.bz2
 
+http://wiki.qemu-project.org/download/qemu-2.0.0.tar.bz2
+./configure --prefix=/home/zeus/ARM_linux-phone/boot-talker/toolchains/tests/u-boot/qemu-2.0.0-bin --target-list=arm-softmmu
+
+--
+
 git clone git://git.osmocom.org/uboot-mt623x
 
    source ../test.env

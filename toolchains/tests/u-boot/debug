@@ -10,8 +10,8 @@
 # because QEMU implements a gdb connector using a TCP connection. 
 # To do so, I run the emulator with the correct options as follows:
 
-qemu-system-arm -M versatilepb -m 128M -nographic -s -S -kernel ./u-boot-2014.04/u-boot.bin
-#qemu-system-arm -M versatilepb -m 128M -nographic -kernel ./u-boot-2014.04/u-boot.bin
+#qemu-system-arm -M versatilepb -m 128M -nographic -s -S -kernel ./u-boot-2014.04/u-boot.bin
+qemu-system-arm -M versatilepb -m 128M -nographic -kernel ./u-boot-2014.04/u-boot.bin
 
 # command freezes the system before executing any guest code, and waits for a connection on the TCP port 1234. 
 # From another terminal, I run arm-none-eabi-gdb and enter the commands:
