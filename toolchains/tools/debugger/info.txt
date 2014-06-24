@@ -1,0 +1,38 @@
+Gdbinit - x86/x86_64 and ARM are supported simultaneously since version 8.0.
+To make ARM the default CPU set the $ARM var to 1 or use the "arm" command to switch.
+FEEDBACK: http://reverse.put.as - reverser@put.as
+https://github.com/gdbinit/Gdbinit
+
+voltron - A hacky debugger UI
+https://github.com/snarez/voltron
+http://ho.ax/posts/2013/06/voltron-a-hacky-ui-for-gdb/
+http://www.cyberhades.com/2013/07/12/voltron-tmux-gdb-sexy/
+
+Nemiver
+https://wiki.gnome.org/Apps/Nemiver
+https://git.gnome.org/browse/nemiver/
+git clone git://git.gnome.org/nemiver
+http://www.jann.cc/2012/04/14/using_nemiver_for_remote_debugging_on_arm_microcontrollers.html
+
+Evan's Debugger  - edb
+https://github.com/tuco86/edb-debugger
+http://codef00.com/projects#debugger
+
+cgdb - the curses debugger
+http://cgdb.github.io/
+
+DebuGui - GDB UI Alpha
+Easy to use GUI for GDB
+http://sourceforge.net/projects/debugui/
+
+gdb tui
+http://habrahabr.ru/post/117928/
+
+---
+
+SkyEye Beta
+a very fast full system simulator
+http://sourceforge.net/projects/skyeye/
+
+wxHexEditor
+http://sourceforge.net/projects/wxhexeditor/
