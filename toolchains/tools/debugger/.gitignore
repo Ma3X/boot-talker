@@ -1,4 +1,5 @@
 /out/
+.gdbinit
 *.o
 *.elf
 *.bin

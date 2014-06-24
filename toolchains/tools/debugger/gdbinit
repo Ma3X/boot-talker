@@ -1,5 +1,13 @@
+#!/bin/bash
+
 #source /home/zeus/ARM_linux-phone/boot-talker/toolchains/tests/u-boot/voltron/dbgentry.py
 #source gdbi.py
+#source peda/peda.py
 #
 # use:  $ gdb -iex 'add-auto-load-safe-path .'
 #
+
+echo "use:  $ gdb -iex 'add-auto-load-safe-path .'"
+
+rm -rf .gdbinit
+ln -s out/.gdbinit .gdbinit
