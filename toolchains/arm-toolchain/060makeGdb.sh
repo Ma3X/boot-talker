@@ -16,6 +16,8 @@ setup_dirs gdb
 run_configure \
     --prefix="$PREFIX_REAL" \
     --target="$TARGET" \
+    --enable-targets=all \
+    --with-python \
     --enable-multilib \
     --with-gnu-ld \
     --with-gnu-as \

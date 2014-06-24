@@ -1,0 +1,19 @@
+for gdb '--enable-targets=all':
+
+if error: rs6000-tdep.c:335: undefined reference to `sim_spr_register_name'
+
+if not for MIPS build  set   sim_spr_register_name = NILL in 335 line :)
+
+if for mips see:
+https://sourceware.org/bugzilla/show_bug.cgi?id=13418
+http://www.cygwin.com/ml/gdb-patches/2012-03/msg00469.html
+
+----
+
+for gdb '--with-python':
+
+python-dev - header files and a static library for Python (default)
+или
+python2.7-dev - Header files and a static library for Python (v2.7)
+
+----
