@@ -1,0 +1,48 @@
+https://github.com/Torlus/qemu.git
+https://github.com/Torlus/qemu-rpi.git
+
+https://github.com/qemu/qemu
+
+for commit f18d11eb3deae0fe31ab6e5c725d2aa54b74940b Torlus/qemu-rpi
+use commit c6f09eb4a0ea14b68f2745e87641c79a51057959 Torlus/qemu-rpi.git
+
+----
+
+apt-get install ncurses-dev libasound2-dev libsdl-dev pkg-config zlib1g-dev libtool
+wget http://buildroot.uclibc.org/downloads/buildroot-2013.02.tar.gz
+git clone https://github.com/maxnet/berryboot.git
+>  SHA-1: 2be69ac0126b84baf3269f0e7b5f9aba3104b3f0
+git clone https://github.com/Torlus/qemu-rpi.git
+>  SHA-1: f18d11eb3deae0fe31ab6e5c725d2aa54b74940b
+git clone https://github.com/Torlus/qemu.git
+cd qemu
+>  views commits for Makefile.objs:
+>  SHA-1: c6f09eb4a0ea14b68f2745e87641c79a51057959
+>  * hw/arm: add very initial support for Canon DIGIC SoC
+git reset --hard c6f09eb4a0ea14b68f2745e87641c79a51057959
+git clean -f
+patch -p1 < ../qemu-rpi/0001-arm-Raspberry-Pi-support.patch
+git submodule update --init dtc
+git submodule update --init pixman
+./configure --target-list=arm-softmmu --audio-drv-list=alsa --enable-sdl
+make
+
+----
+
+apt-get install kpartx
+qemu-img create a.img 2G
+kpartx -av ./a.img
+lsblk
+fdisk /dev/loop1
+mkfs.vfat /dev/mapper/loop1p1
+mount -v /dev/mapper/loop1p1 /mnt
+sync
+umount -v /dev/mapper/loop1p1
+kpartx -d ./a.img
+
+----
+
+./qemu-system-arm -kernel kernel_rpi_aufs.img -initrd berryboot.img -cpu arm1176 -m 512 -M raspi -no-reboot -serial stdio -sd a.img
+./qemu-system-arm -kernel kernel_rpi_aufs.img -cpu arm1176 -m 512 -M raspi -no-reboot -serial stdio -sd a.img -initrd berryboot.img -append "rw dma.dmachans=0x7f35 bcm2708_fb.fbwidth=1024 bcm2708_fb.fbheight=768 bcm2708.boardrev=0xf bcm2708.serial=0xcad0eedf sdhci-bcm2708.emmc_clock_freq=100000000 vc_mem.mem_base=0x1c000000 vc_mem.mem_size=0x20000000 dwc_otg.lpm_enable=0 console=tty1 root=/dev/mmcblk0p1 elevator=deadline rootwait" -device usb-kbd -device usb-mouse
+
+----
