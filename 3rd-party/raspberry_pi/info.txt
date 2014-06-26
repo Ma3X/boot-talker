@@ -1,6 +1,11 @@
 https://github.com/Torlus/qemu.git
 https://github.com/Torlus/qemu-rpi.git
 
+http://www.berryterminal.com/doku.php/berryboot
+https://github.com/maxnet/berryboot
+https://github.com/maxnet/berryboot.git
+http://sourceforge.net/projects/berryboot/
+
 https://github.com/qemu/qemu
 
 for commit f18d11eb3deae0fe31ab6e5c725d2aa54b74940b Torlus/qemu-rpi

@@ -1,0 +1,29 @@
+$ qemu-img create a.img 2G
+$ qemu-system-arm -cpu ?
+$ qemu-system-arm -M ?
+$ qemu-system-arm -cpu arm1176 -m 512 -M versatilepb -no-reboot -serial stdio -hda a.img
+
+# losetup -v /dev/loop1 a.img
+$ lsblk
+# fdisk /dev/loop1
+# losetup -v -d /dev/loop1
+
+# kpartx -av a.img
+add map loop1p1 (254:4): 0 409600 linear /dev/loop1 2048
+add map loop1p2 (254:5): 0 3782656 linear /dev/loop1 411648
+# mkfs.vfat /dev/mapper/loop1p1
+# mkfs.ext4 /dev/mapper/loop1p2
+# mount -v /dev/mapper/loop1p1 ./tmp
+copy from berryboot-20130908.zip
+# umount -v ./tmp
+# kpartx -d a.img
+loop deleted : /dev/loop1
+
+qemu-system-arm -kernel kernel-qemu.img
+                -cpu arm1176
+                -m 256 
+                -M versatilepb 
+                -append "root=/dev/sda2 rootfstype=ext4 panic=1" 
+                -hda 2013-02-09-wheezy-raspbian.img
+
+$ qemu-system-arm -kernel kernel-qemu -cpu arm1176 -m 512 -M versatilepb -no-reboot -serial stdio -hda a.img
