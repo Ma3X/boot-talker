@@ -70,7 +70,7 @@
 # __________________gdb options_________________
 
 # set to 1 to have ARM target debugging as default, use the "arm" command to switch inside gdb
-set $ARM = 0
+set $ARM = 1
 # set to 0 if you have problems with the colorized prompt - reported by Plouj with Ubuntu gdb 7.2
 set $COLOREDPROMPT = 1
 # color the first line of the disassembly - default is green, if you want to change it search for
@@ -2146,7 +2146,7 @@ define context
 	        color $GREEN
             if ($ARM == 1)
                 #       | $cpsr.t (Thumb flag)
-                x/i (unsigned int)$pc | (($cpsr >> 5) & 1)
+                x/i (unsigned int)($pc-2*2) | (($cpsr >> 5) & 1)
             else
     	        x/i $pc
             end
@@ -2154,7 +2154,7 @@ define context
 	    else
             if ($ARM == 1)
                 #       | $cpsr.t (Thumb flag)
-	              x/i (unsigned int)$pc | (($cpsr >> 5) & 1)
+	              x/i (unsigned int)($pc-2*2) | (($cpsr >> 5) & 1)
             else
                 x/i $pc
             end
@@ -3173,7 +3173,8 @@ define hook-stop
     # Display instructions formats
     if $ARM == 1
         if $ARMOPCODES == 1
-            set arm show-opcode-bytes 1
+            echo set arm show-opcode-bytes 1
+            set architecture arm
         end
     else
         if $X86FLAVOR == 0
@@ -3679,7 +3680,8 @@ end
 
 define arm
     if $ARMOPCODES == 1
-        set arm show-opcode-bytes 1
+        echo set arm show-opcode-bytes 1
+        set architecture arm
     end
     set $ARM = 1
 end
