@@ -1,5 +1,6 @@
 /out/
 .gdbinit
+.gdb_history
 *.o
 *.elf
 *.bin
