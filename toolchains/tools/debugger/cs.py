@@ -19,11 +19,14 @@ tb = curses.textpad.Textbox(win)
 text = tb.edit()
 curses.addstr(4,1,text.encode('utf_8'))
 
-#hw = "Hello world!"
-#while 1:
-#    c = stdscr.getch()
-#    if c == ord('p'): 
-#    elif c == ord('q'): break # Exit the while()
-#    elif c == curses.KEY_HOME: x = y = 0
+hw = "Hello world!"
+while 1:
+    c = stdscr.getch()
+    if c == ord('p'):
+        break # Exit the while()
+    elif c == ord('q'):
+        break # Exit the while()
+    elif c == curses.KEY_HOME:
+        x = y = 0
 
 curses.endwin()
