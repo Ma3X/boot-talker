@@ -1,6 +1,59 @@
 #!/bin/bash
 
 # http://balau82.wordpress.com/2010/08/17/debugging-arm-programs-inside-qemu/
+# http://balau82.wordpress.com/2010/03/27/busybox-for-arm-on-qemu/
+
+# errors:
+#
+#    http://lists.busybox.net/pipermail/busybox/2012-May/077766.html
+# 1. loginutils/passwd.c:104:16: error: storage size of 'rlimit_fsize' isn't known
+#
+#  Fix this by including sys/resource.h.
+#  
+#  Signed-off-by: Markus Trippelsdorf <markus at trippelsdorf.de>
+#  ---
+#   include/libbb.h |    1 +
+#   1 file changed, 1 insertion(+)
+#  
+#  diff --git a/include/libbb.h b/include/libbb.h
+#  index f12800f..e7806c2 100644
+#  --- a/include/libbb.h
+#  +++ b/include/libbb.h
+#  @@ -40,6 +40,7 @@
+#   #include <sys/poll.h>
+#   #include <sys/ioctl.h>
+#   #include <sys/mman.h>
+#  +#include <sys/resource.h>
+#   #include <sys/socket.h>
+#   #include <sys/stat.h>
+#   #include <sys/time.h>
+#
+#
+#    http://comments.gmane.org/gmane.linux.busybox/34661
+# 2. /usr/include/linux/kernel.h:12:8: error: redefinition of 'struct sysinfo'
+#    include/libbb.h:138:8: note: originally defined here
+#
+#  But of course, it would be better to surround sysinfo struct def with
+#  #ifndef and/or, if it is so important to keep libbb's one definition,
+#  to #undef it.
+#
+#  in libbb.h:
+#      #ifndef _LINUX_SYSINFO_H
+#      #define _LINUX_SYSINFO_H
+#      struct sysinfo {
+#      ...
+#      #endif /* _LINUX_SYSINFO_H */
+#      int sysinfo(struct sysinfo* info);
+#
+#
+#    http://forums.gentoo.org/viewtopic-t-924798-start-0.html
+# 3. e2fsprogs/tune2fs.c:11:27: fatal error: linux/ext2_fs.h: No such file or directory
+#
+#    find /usr/src/linux/ -name "ext2*.h"
+#    /usr/src/linux/include/linux/ext2_fs.h
+#
+#    I'm copy to: busybox include dir
+#
 
 set -e
 
@@ -13,7 +66,9 @@ test -d $OUT
 
 #arm-none-eabi-gcc lcd.c -nostdlib -o $OUT/lcd.o
 #arm-none-eabi-objcopy -j .text -O binary $OUT/lcd.o $OUT/lcd.bin
-qemu-system-arm -M versatilepb -m 128M -kernel $OUT/linux-2.6.35/arch/arm/boot/zImage -usb
+#qemu-system-arm -M versatilepb -m 128M -kernel $OUT/linux-2.6.35/arch/arm/boot/zImage -usb
+qemu-system-arm -M versatilepb -m 128M -kernel $OUT/linux-2.6.35/arch/arm/boot/zImage -initrd $OUT/rootfs.img.gz -append "root=/dev/ram rdinit=/sbin/init"
+#qemu-system-arm -M versatilepb -m 128M -kernel ./linux-2.6.35/arch/arm/boot/zImage -initrd ./rootfs.img.gz -append "root=/dev/ram rdinit=/sbin/init" -redir tcp:1234::1234
 
 #   ./gcc-arm test.c -nostdlib -o test.o
 #   ./objcopy-arm -j .text -O binary test.o test.bin
