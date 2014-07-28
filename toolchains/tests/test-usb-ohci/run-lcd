@@ -1,0 +1,37 @@
+#!/bin/bash
+
+set -e
+
+. ../test.env
+#echo $PATH
+
+OUT=./out
+mkdir -p $OUT
+test -d $OUT
+
+arm-none-eabi-gcc lcd.c -nostdlib -o $OUT/lcd.o
+arm-none-eabi-objcopy -j .text -O binary $OUT/lcd.o $OUT/lcd.bin
+qemu-system-arm -m 8 -kernel $OUT/lcd.bin
+
+#   ./gcc-arm test.c -nostdlib -o test.o
+#   ./objcopy-arm -j .text -O binary test.o test.bin
+#   qemu-system-arm -m 8 -kernel test.bin
+
+# this
+#
+# arm-none-eabi-as -mcpu=arm926ej-s -g startup.s -o $OUT/startup.o
+# file $OUT/startup.o
+# arm-none-eabi-gcc -c -mcpu=arm926ej-s -g test.c -o $OUT/test.o
+# file $OUT/test.o
+# arm-none-eabi-ld -T test.ld $OUT/test.o $OUT/startup.o -o $OUT/test.elf
+# arm-none-eabi-objcopy -O binary $OUT/test.elf $OUT/test.bin
+
+#arm-none-eabi-as -mcpu=arm926ej-s -g startup.s -o startup.o
+#arm-none-eabi-gcc -c -mcpu=arm926ej-s -g test.c -o test.o
+#arm-none-eabi-ld -T test.ld test.o startup.o -o test.elf
+#arm-none-eabi-objcopy -O binary test.elf test.bin
+
+#arm-none-eabi-as -meabi=5 ./a.S -o $OUT/a.o
+#arm-none-eabi-ld $OUT/a.o -T ./a.lds -o $OUT/a.elf
+#arm-none-eabi-objcopy -O binary $OUT/a.elf $OUT/a.bin
+#arm-none-eabi-objdump $OUT/a.elf --disassemble-all > $OUT/a.dis
