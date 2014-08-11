@@ -1,0 +1,57 @@
+w:\Projects\mobile\pitosha\tests\windevnotif>python test.py
+pre PumpMessages
+pre onWait
+Something's arrived
+It's a port!
+24
+3
+0
+COM48
+port_name is: COM48
+COM48
+module PySerial version: 2.7
+loader1.bin data size is: 1844
+loader2.bin data size is: 189364
+Work with Samsung SGH-E730:
+- wait for SWIFT power on...
+           -> a0
+RX is L: 1 <- 5f
+           -> 0a
+RX is L: 1 <- f5
+           -> 50
+RX is L: 1 <- af
+           -> 05
+RX is L: 1 <- fa
+           -> a2
+RX is L: 1 <- a2
+           -> 80010000
+RX is L: 4 <- 80010000
+           -> 00000001
+RX is L: 4 <- 00000001
+RX is L: 2 <- 8a02
+           -> a2
+RX is L: 1 <- a2
+           -> 80010008
+RX is L: 4 <- 80010008
+           -> 00000001
+RX is L: 4 <- 00000001
+RX is L: 2 <- 6253
+           -> a2
+RX is L: 1 <- a2
+           -> 80010004
+RX is L: 4 <- 80010004
+           -> 00000001
+RX is L: 4 <- 00000001
+RX is L: 2 <- 8a00
+           -> a1
+RX is L: 1 <- a1
+           -> 80030000
+RX is L: 4 <- 80030000
+           -> 00000001
+RX is L: 4 <- 00000001
+           -> 2200
+RX is L: 2 <- 2200
+
+You pressed Ctrl+C!
+MTK_Finalize
+           -> b7
