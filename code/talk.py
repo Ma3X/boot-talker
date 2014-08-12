@@ -434,10 +434,70 @@ from time import sleep as Sleep
 
 #----- MAIN CODE -------------------------------------------
 if __name__=='__main__':
-  Thread(target = windevnotif.run_notify).start()
-  Sleep(1)
-  port = windevnotif.get_notify()
-  print "port_name is: " + port
-  #conn_port(port)
-  #mediatek.init(port)
-  m = MTKBootload(port)
+    print ""
+    print "Select: xml, boot"
+    print ""
+    tsk = str(raw_input("enter command > "))
+    if tsk.lower() in ['boot']:
+        print "Working with device communication..."
+        print ""
+        Thread(target = windevnotif.run_notify).start()
+        Sleep(1)
+        port = windevnotif.get_notify()
+        print "port_name is: " + port
+        #conn_port(port)
+        #mediatek.init(port)
+        m = MTKBootload(port)
+    if tsk.lower() in ['xml', 'lxml']:
+        print "Working with lxml..."
+        print ""
+        from lxml import etree
+        tree = etree.parse('../../mtk-tests/Projects/_lg-a290/data/UTLog_DownloadAgent_FlashTool.xml')
+        root = tree.getroot()
+        print root
+        #entries = tree.xpath("//atom:category[@term='accessibility']/..", namespaces=NSMAP)
+        entries = tree.xpath("//UTLOG/Request[@Dir='[OUT]']/Data")
+        #print entries
+        old_text = None
+        dmp_text = False
+        cnt_text = 0
+        bin_file = None
+        for xent in entries:
+            new_text = xent.text
+            
+            if new_text == old_text:
+                continue
+            old_text = new_text
+            #print "-> " + new_text
+            
+            bin_text = new_text.replace(" ", "")
+            bin_text = bin_text.decode("hex")
+            bin_len  = len(bin_text)
+            print str(bin_len) + " -> " + new_text
+            if dmp_text is False and bin_len == 1024:
+                dmp_text = True
+                prt = xent.getparent()
+                atr = prt.attrib
+                num = atr["Number"]
+                nam = "big_" + num + ".bin"
+                bin_file = open(nam, 'wb')
+                print ""
+                print "start dump big data to: " + nam
+            if dmp_text is True:
+                #---
+                import array
+                a = array.array('H', bin_text)  # array.array('H', bin_text)
+                a.byteswap()
+                bin_text = a.tostring()
+                #---
+                bin_file.write(bin_text)
+                if bin_len == 1024:
+                    cnt_text += 1
+                else:
+                    cnt_text = cnt_text * 1024 + bin_len
+                    dmp_text = False
+                    bin_file.close()
+                    print "big data length is: " + str(cnt_text)
+                    print ""
+                    cnt_text = 0
+        pass
