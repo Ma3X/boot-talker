@@ -228,11 +228,35 @@ class MTKBootload():
         # enter to interactive console
         while True:
             tsk = str(raw_input("enter command > "))
+            # exit from loop
             if tsk.lower() in ['exit', 'quit', 'q']:
                 break
+            # checksum logical XOR tester
+            if tsk.lower() in ['crc']:
+                #str1 = raw_input("Enter one hex word: ")
+                #str2 = raw_input("Enter two hex word: ")
+                #print hex(int(str1, 16) ^ int(str2, 16))
+                #print "XOR-ed words is: " + words_xor(str1.decode('hex'))
+                #from ...common.logical import words_xor, word_byteswap, chunkstring
+                from ...common import logical
+                from mt6253 import load_bootcode_first as mtk_first_bootcode
+                loader1 = mtk_first_bootcode()
+                print "loader data size is: " + str(len(loader1))
+                ldr1_sz = len(loader1)
+                ldr1_swp = logical.word_byteswap(loader1)       # loader1[s:s-1]
+                ldr1_cnk = logical.chunkstring(ldr1_swp, 1024)
+                j = 0
+                #for i in ldr1_cnk:
+                #    j += 1
+                #    print str(j) + " -> " + str(len(i))
+                print "loader1 XOR-ed checksum is: " + binascii.b2a_hex(logical.words_xor(ldr1_swp))
+                continue
+            # force wait
             if tsk.lower() in ['get']:
                 res = self.oin.onWait()
+            # exec downagent code
             if tsk.lower() in ['da', 'downagent']:
+                from mt6253 import xdwag
                 for xlist in xdwag:
                     res = self.out.push(xlist[0], self.oin.onWait)
                     if xlist[2] == '+':

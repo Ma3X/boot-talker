@@ -1,6 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
+
+__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+
+def load_bootcode_first():
+  return open(os.path.join(__location__, "mt6253.bin"), "rb").read()
+
 xboot = [
           # initialize bootloading in device
           # ["A0",       "0A",       "params" ],

@@ -432,10 +432,13 @@ from hktool.bootload.mediatek import MTKBootload
 from threading import Thread
 from time import sleep as Sleep
 
+def logical_xor(str1, str2):
+    return bool(str1) ^ bool(str2)
+
 #----- MAIN CODE -------------------------------------------
 if __name__=='__main__':
     print ""
-    print "Select: xml, boot"
+    print "Select: xml, boot, crc"
     print ""
     tsk = str(raw_input("enter command > "))
     if tsk.lower() in ['boot']:
@@ -500,4 +503,18 @@ if __name__=='__main__':
                     print "big data length is: " + str(cnt_text)
                     print ""
                     cnt_text = 0
+        pass
+    if tsk.lower() in ['crc']:
+        str1 = raw_input("Enter string one:")
+        str2 = raw_input("Enter string two:")
+        if logical_xor(str1, str2):
+            print "ok"
+        else:
+            print "bad"
+        pass
+        print hex(0x12ef ^ 0xabcd)
+        print hex(int("12ef", 16) ^ int("abcd", 16))
+        str1 = raw_input("Enter string one: ")
+        str2 = raw_input("Enter string two: ")
+        print hex(int(str1, 16) ^ int(str2, 16))
         pass
