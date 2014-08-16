@@ -441,6 +441,8 @@ if __name__=='__main__':
     print "Select: xml, boot, crc"
     print ""
     tsk = str(raw_input("enter command > "))
+    if tsk.lower() in ['exit', 'quit', 'q']:
+        os._exit(0)
     if tsk.lower() in ['boot']:
         print "Working with device communication..."
         print ""
@@ -518,3 +520,45 @@ if __name__=='__main__':
         str2 = raw_input("Enter string two: ")
         print hex(int(str1, 16) ^ int(str2, 16))
         pass
+    if tsk.lower() in ['usb']:
+        import usb.core
+        #import usb.backend.libusb1
+        import usb.backend.libusb0
+        import logging
+        #PYUSB_DEBUG_LEVEL = "debug"
+        #PYUSB_LOG_FILENAME = "C:\dump"
+        __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+        __backend__  = os.path.join(__location__, "libusb0.dll")
+        #PYUSB_LOG_FILENAME = __location__
+        #backend = usb.backend.libusb1.get_backend(find_library=lambda x: "/usr/lib/libusb-1.0.so")
+        #backend = usb.backend.libusb1.get_backend(find_library=lambda x: __backend__)
+        backend = usb.backend.libusb0.get_backend(find_library=lambda x: __backend__)
+
+        dev = usb.core.find(find_all=True, backend=backend)
+        #dev = usb.core.find(find_all=True)
+        busses = usb.busses()
+        print busses
+        if dev is None:
+            raise ValueError('Our device is not connected')
+        for bus in busses:
+            devices = bus.devices
+            for dev in devices:
+                try:
+                    _name = usb.util.get_string(dev.dev, 19, 1)
+                except:
+                    continue
+                dev.set_configuration()
+                cfg = dev.get_active_configuration()
+                interface_number = cfg[(0,0)].bInterfaceNumber
+                alternate_settting = usb.control.get_interface(interface_number)
+                print "Device name:",_name
+                print "Device:", dev.filename
+                print "  idVendor:",hex(dev.idVendor)
+                print "  idProduct:",hex(dev.idProduct)
+                for config in dev.configurations:
+                    print "  Configuration:", config.value
+                    print "    Total length:", config.totalLength 
+                    print "    selfPowered:", config.selfPowered
+                    print "    remoteWakeup:", config.remoteWakeup
+                    print "    maxPower:", config.maxPower
+                print 

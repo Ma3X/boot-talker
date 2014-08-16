@@ -7,6 +7,7 @@
 #from part2 import hello2
 
 import serial, time, binascii
+import os
 
 #--------------------------------------------------------------------
 
@@ -14,6 +15,13 @@ def serialPost(ser, data):
     #time.sleep(0.5)
     #data = chr(0x44)
     print "           -> " + binascii.b2a_hex(data)
+    ser.write(data)
+    #ser.flush()
+
+def serialPostBin(ser, data):
+    #time.sleep(0.5)
+    #data = chr(0x44)
+    #print "           -> " + binascii.b2a_hex(data)
     ser.write(data)
     #ser.flush()
 
@@ -53,6 +61,7 @@ from threading import Thread
 class Coin():
     ser    = None
     event  = threading.Event()
+    cond   = threading.Condition()
     last   = None
 
     def __init__(self, ser):
@@ -60,21 +69,37 @@ class Coin():
         self.ser = ser
         pass
 
+    #@staticmethod
     def run(self):
+        u"""A decorator function to implement a blocking method on a thread"""
         while True:
             n = 0
             while n < 1:
                 self.event.clear()
+                #self.cond.acquire()
                 n = self.ser.inWaiting()
             data = self.ser.read(n)
             self.last = data
             leng = len(data)
             print "RX is L: " + str(leng) + " <- " + binascii.b2a_hex(data)
             self.event.set()
+            #self.cond.notifyAll()
+            ##self.cond.release()
         pass
 
+    #@staticmethod
     def onWait(self):
+        u"""A decorator function to implement a non-blocking method on a
+        thread
+        """
         self.event.wait()
+        #self.cond.acquire()
+        #try:
+        #  self.cond.wait(timeout=2)
+        #except RuntimeError:
+        #  print "Time is out!"
+        #finally:
+        #  self.cond.release()
         return self.last
 
 class Cout():
@@ -90,12 +115,19 @@ class Cout():
     def push(self, data, wfunc):
         serialPost(self.ser, data.decode("hex"))
         return wfunc()
+
+    def push_bin(self, data, wfunc):
+        serialPostBin(self.ser, data)
+        return wfunc()
     
     # отправка данных в порт без ожидания ответа
     # self.out("0A")
     #def __call__(self, data):
     def __call__(self, data):
         serialPost(self.ser, data.decode("hex"))
+
+    def call_bin(self, data):
+        serialPostBin(self.ser, data)
 
 #--------------------------------------------------------------------
 
@@ -218,6 +250,11 @@ class MTKBootload():
                     print ''
                     from mt6253 import xboot
                     from mt6253 import xdwag
+                if mcu == '6235':
+                    print "run mcu " + mcu + " boot code"
+                    print ''
+                    from mt6235 import xboot
+                    from mt6235 import xdwag
 
         # specific mtk mcu boot code
         for xlist in xboot:
@@ -257,11 +294,27 @@ class MTKBootload():
             # exec downagent code
             if tsk.lower() in ['da', 'downagent']:
                 from mt6253 import xdwag
+                last_wait_bytes = 0
                 for xlist in xdwag:
                     res = self.out.push(xlist[0], self.oin.onWait)
-                    if xlist[2] == '+':
+                    last_wait_bytes = len(xlist[1].decode('hex'))
+                    if xlist[2] == '+' and last_wait_bytes <= self.oin.last:
                         res = self.oin.onWait()
                 continue
+            if tsk.lower() in ['test', 't']:
+                from hktool.bootload.mediatek import mt6235
+                reload(mt6235)
+                loader1 = mt6235.load_bootcode_first()
+                ldr1_sz = len(loader1)
+                print "loader data size is: " + str(ldr1_sz)
+                from ...common import logical
+                ldr1_swp = logical.word_byteswap(loader1)       # loader1[s:s-1]
+                ldr1_crc = logical.words_xor(ldr1_swp)
+                print "loader1 XOR-ed checksum is: " + binascii.b2a_hex(ldr1_crc)
+                ldr1_cnk = logical.chunkstring(ldr1_swp, 1024)
+                mt6235.test_boot(self.out, self.oin, ldr1_cnk, ldr1_crc)
+                continue
+            # other code for base task
             any = tsk[len(tsk)-1:]
             if any == '+':
                 tsk = tsk[:-1]
@@ -271,6 +324,7 @@ class MTKBootload():
         # "B7" - mtk terminate
 
         print "Exiting..."
+        os._exit(0)
         #mt6253.init(oin, out)
         pass
 
