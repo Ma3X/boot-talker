@@ -8,6 +8,9 @@ __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file
 def load_bootcode_first():
   return open(os.path.join(__location__, "mt6253.bin"), "rb").read()
 
+def load_bootcode_test():
+  return open(os.path.join(__location__, "mt6253_test.bin"), "rb").read()
+
 xboot = [
           # initialize bootloading in device
           # ["A0",       "0A",       "params" ],
@@ -106,6 +109,41 @@ def test_boot(out, oin, cnk, crc):
     #signal.signal(signal.SIGINT, signal.SIG_DFL)
     pass
     while True:
+        ldr_test = load_bootcode_test()
+        ldr_size = len(ldr_test)
+        print "loader data size is: " + str(ldr_size)
+        from ...common import logical
+        import binascii
+        ldr_swp = logical.word_byteswap(ldr_test)       # loader1[s:s-1]
+        ldr_crc = logical.words_xor(ldr_swp)
+        print "loader1 XOR-ing checksum is: " + binascii.b2a_hex(ldr_crc)
+        ldr_cnk = logical.chunkstring(ldr_swp, 1024)
+                
+        res = out.push("AD",       oin.onWait)
+        res = out.push("40006000", oin.onWait)
+        res = out.push("00000280", oin.onWait)  # 1280 -> 05 00   / 2 =  02 80
+        j = 0
+        for i in ldr_cnk:
+            j += 1
+            res = out.call_bin(i)
+            print str(j) + " -> " + str(len(i))
+            import time
+            time.sleep(0.1)
+        res = out.push("A4",       oin.onWait)
+        res = out.push("40006000", oin.onWait)
+        res = out.push("00000280", oin.onWait)  # -> d9 e7  (1024*1 + 256)
+        try:
+            timelimit(1, oin.onWait, args=(), kwargs={})
+        except TimeLimitExpired:
+            print " - "
+        #res = out.push("A8",       oin.onWait)
+        #res = out.push("40006000", oin.onWait)  # jump to 0x40006000
+        #try:
+        #    timelimit(1, oin.onWait, args=(), kwargs={})
+        #except TimeLimitExpired:
+        #    print " - "
+        break
+    while False:
         res = out.push("AD",       oin.onWait)
         res = out.push("40006000", oin.onWait)
         res = out.push("0000759A", oin.onWait)  # 60212 -> EB34   / 2 = 75 9A
