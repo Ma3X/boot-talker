@@ -250,11 +250,13 @@ class MTKBootload():
                     print ''
                     from mt6253 import xboot
                     from mt6253 import xdwag
+                    from hktool.bootload.mediatek import mt6253 as mtk_spec
                 if mcu == '6235':
                     print "run mcu " + mcu + " boot code"
                     print ''
                     from mt6235 import xboot
                     from mt6235 import xdwag
+                    from hktool.bootload.mediatek import mt6235 as mtk_spec
 
         # specific mtk mcu boot code
         for xlist in xboot:
@@ -302,9 +304,9 @@ class MTKBootload():
                         res = self.oin.onWait()
                 continue
             if tsk.lower() in ['test', 't']:
-                from hktool.bootload.mediatek import mt6235
-                reload(mt6235)
-                loader1 = mt6235.load_bootcode_first()
+                #from hktool.bootload.mediatek import mt6235
+                reload(mtk_spec)
+                loader1 = mtk_spec.load_bootcode_first()
                 ldr1_sz = len(loader1)
                 print "loader data size is: " + str(ldr1_sz)
                 from ...common import logical
@@ -312,7 +314,7 @@ class MTKBootload():
                 ldr1_crc = logical.words_xor(ldr1_swp)
                 print "loader1 XOR-ed checksum is: " + binascii.b2a_hex(ldr1_crc)
                 ldr1_cnk = logical.chunkstring(ldr1_swp, 1024)
-                mt6235.test_boot(self.out, self.oin, ldr1_cnk, ldr1_crc)
+                mtk_spec.test_boot(self.out, self.oin, ldr1_cnk, ldr1_crc)
                 continue
             # other code for base task
             any = tsk[len(tsk)-1:]
