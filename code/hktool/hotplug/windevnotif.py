@@ -1,7 +1,12 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import win32api, win32con, win32gui
 import threading
 import ctypes
 from ctypes import *
+
+#--------------------------------------------------------------------
 
 #
 # Device change events (WM_DEVICECHANGE wParam)
@@ -184,3 +189,4 @@ def get_notify():
   import gc
   gc.collect()
   return port
+

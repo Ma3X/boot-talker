@@ -425,7 +425,6 @@ def conn_port (ser_port):
 
 #===========================================================
 
-from hktool.hotplug  import windevnotif
 #from hktool.bootload import mediatek
 from hktool.bootload.mediatek import MTKBootload
 
@@ -437,8 +436,24 @@ def logical_xor(str1, str2):
 
 #----- MAIN CODE -------------------------------------------
 if __name__=='__main__':
+    from sys import platform as _platform
+    import os
+    if _platform == "linux" or _platform == "linux2":
+        # linux
+        print "it is linux?"
+        from hktool.hotplug  import linux_udev as port_notify
+    elif _platform == "darwin":
+        # OS X
+        print "it is osx?"
+        print "WARNING: port_notify is not realised !!!"
+    elif _platform == "win32":
+        # Windows...
+        print "it is windows?"
+        from hktool.hotplug  import windevnotif as port_notify
+    print "sys.platform: " + _platform + ", os.name: " + os.name
+
     print ""
-    print "Select: xml, boot, crc"
+    print "Select: xml, boot, sgh, crc, usb, exit, quit, q"
     print ""
     tsk = str(raw_input("enter command > "))
     if tsk.lower() in ['exit', 'quit', 'q']:
@@ -446,9 +461,9 @@ if __name__=='__main__':
     if tsk.lower() in ['boot']:
         print "Working with device communication..."
         print ""
-        Thread(target = windevnotif.run_notify).start()
+        Thread(target = port_notify.run_notify).start()
         Sleep(1)
-        port = windevnotif.get_notify()
+        port = port_notify.get_notify()
         print "port_name is: " + port
         #conn_port(port)
         #mediatek.init(port)
