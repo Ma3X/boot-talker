@@ -453,6 +453,15 @@ if __name__=='__main__':
         #conn_port(port)
         #mediatek.init(port)
         m = MTKBootload(port)
+    if 'sgh' in tsk.lower():
+        tsks = tsk.split()
+        print ""
+        print "Working with device communication..."
+        print ""
+        Sleep(1)
+        port = tsks[1]
+        print "port_name is: " + port
+        #m = SGHBootload(port)
     if tsk.lower() in ['xml', 'lxml']:
         print "Working with lxml..."
         print ""
