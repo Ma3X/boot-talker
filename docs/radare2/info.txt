@@ -1,0 +1,1 @@
+rasm2 -a arm -f test.S -B > test.bin
