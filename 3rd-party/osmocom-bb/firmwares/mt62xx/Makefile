@@ -71,3 +71,7 @@ all:
 	arm-none-eabi-objcopy --gap-fill=0xff -O binary loader.elf loader.bin
 	
 	arm-none-eabi-size loader.elf | tee loader.size
+
+clean:
+	rm -rf objs/*.o
+	rm -rf loader.*
