@@ -1,0 +1,70 @@
+apps/loader_mtk/main.c
+flash/cfi_flash.c
+board/mediatek/uart.c
+board/mt62xx/init.c
+board/mediatek/start.ram.S
+board/manifest.c
+
+lib/vsprintf.c
+lib/string.c
+lib/ctype.c
+lib/printf.c
+lib/console.c
+lib/ctors.c
+lib/changebit.S
+lib/clearbit.S
+lib/delay.c
+lib/div64.S
+lib/lib1funcs.S
+lib/memcpy.S
+lib/memset.S
+lib/setbit.S
+lib/testchangebit.S
+lib/testclearbit.S
+lib/testsetbit.S
+arm-none-eabi-ar cru lib/libmini.a lib/vsprintf.o 
+                                   lib/string.o 
+                                   lib/ctype.o 
+                                   lib/printf.o 
+                                   lib/console.o 
+                                   lib/ctors.o 
+                                   lib/changebit.o 
+                                   lib/clearbit.o 
+                                   lib/delay.o 
+                                   lib/div64.o 
+                                   lib/lib1funcs.o 
+                                   lib/memcpy.o 
+                                   lib/memset.o 
+                                   lib/setbit.o 
+                                   lib/testchangebit.o 
+                                   lib/testclearbit.o 
+                                   lib/testsetbit.o
+
+comm/msgb.c
+comm/sercomm.c
+comm/sercomm_cons.c
+comm/timer.c
+arm-none-eabi-ar cru comm/libcomm.a comm/msgb.o 
+                                    comm/sercomm.o 
+                                    comm/sercomm_cons.o 
+                                    comm/timer.o
+
+arm-none-eabi-ld -nostartfiles -nostdlib -nodefaultlibs --gc-sections --cref -T board/mediatek/ram.lds -Bstatic 
+                 -Map board/mt62xx/loader_mtk.mtkram.map 
+                 -o board/mt62xx/loader_mtk.mtkram.elf 
+                 --start-group apps/loader_mtk/main.o 
+                               flash/cfi_flash.o  
+                               board/mediatek/uart.o 
+                               board/mt62xx/init.o 
+                               board/mediatek/start.ram.o 
+                               board/mt62xx/loader_mtk.mtkram.manifest.o 
+                               lib/libmini.a comm/libcomm.a 
+                               ../../shared/libosmocore/build-target/src/.libs/libosmocore.a 
+                 --end-group
+
+arm-none-eabi-objcopy --gap-fill=0xff -O binary board/mt62xx/loader_mtk.mtkram.elf board/mt62xx/loader_mtk.mtkram.bin
+
+arm-none-eabi-size board/mt62xx/loader_mtk.mtkram.elf | tee board/mt62xx/loader_mtk.mtkram.size
+   text	   data	    bss	    dec	    hex	filename
+  12733	    292	  22540	  35565	   8aed	board/mt62xx/loader_mtk.mtkram.elf
+ALL_APPS:  + board/mt62xx/loader_mtk.mtkram.elf
