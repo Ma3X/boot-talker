@@ -25,16 +25,16 @@
  *
  */
 
-#include <debug.h>
-#include <memory.h>
+#include "debug.h"
+#include "memory.h"
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
-#include <defines.h>
-#include <uart.h>
-#include <console.h>
+#include "defines.h"
+#include "uart.h"
+#include "console.h"
 
-#include <comm/sercomm.h>
+#include "comm/sercomm.h"
 
 /* MT622x */
 #if 0

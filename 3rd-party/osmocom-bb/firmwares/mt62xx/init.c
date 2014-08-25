@@ -23,23 +23,23 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include <debug.h>
-#include <ctors.h>
-#include <memory.h>
-#include <board.h>
-#include <keypad.h>
-#include <uart.h>
-#include <console.h>
-#include <delay.h>
+#include "debug.h"
+#include "ctors.h"
+#include "memory.h"
+#include "board.h"
+#include "keypad.h"
+#include "uart.h"
+#include "console.h"
+#include "delay.h"
 
-#include <flash/cfi_flash.h>
+#include "flash/cfi_flash.h"
 
-#include <comm/sercomm.h>
-#include <comm/timer.h>
+#include "comm/sercomm.h"
+#include "comm/timer.h"
 
-#include <mtk/emi.h>
-#include <mtk/mt6235.h>
-#include <mtk/system.h>
+#include "mtk/emi.h"
+#include "mtk/mt6235.h"
+#include "mtk/system.h"
 
 void pll_init(void)
 {

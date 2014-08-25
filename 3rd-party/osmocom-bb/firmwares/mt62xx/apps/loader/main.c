@@ -1,8 +1,6 @@
-/*
- * boot loader for MTK phones (based on the calypso-version)
- *
- * (C) 2010 by Ingo Albrecht <prom@berlin.ccc.de>
- * (C) 2011 by Wolfram Sang <wolfram@the-dreams.de>
+/* boot loader for Calypso phones */
+
+/* (C) 2010 by Ingo Albrecht <prom@berlin.ccc.de>
  *
  * All Rights Reserved
  *
@@ -26,33 +24,41 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "debug.h"
-#include "memory.h"
-#include "delay.h"
-#include "keypad.h"
-#include "board.h"
-#include "console.h"
-#include "defines.h"
-#include "manifest.h"
+#include <debug.h>
+#include <memory.h>
+#include <delay.h>
+#include <rffe.h>
+#include <keypad.h>
+#include <board.h>
+#include <console.h>
+#include <manifest.h>
 
-#include "core/crc16.h"
+#include <osmocom/core/crc16.h>
 
-#include "comm/sercomm.h"
+#include <abb/twl3025.h>
+#include <rf/trf6151.h>
 
-#include "uart.h"
+#include <comm/sercomm.h>
 
-#include "flash/cfi_flash.h"
+#include <calypso/clock.h>
+#include <calypso/tpu.h>
+#include <calypso/tsp.h>
+#include <calypso/irq.h>
+#include <calypso/misc.h>
+#include <calypso/backlight.h>
+#include <uart.h>
+#include <calypso/timer.h>
+#include <fb/framebuffer.h>
 
-#include "mtk/emi.h"
-#include "mtk/mt6235.h"
-#include "mtk/system.h"
+#include <flash/cfi_flash.h>
 
-#include "apps/loader/protocol.h"
+#include "protocol.h"
 
 /* Main Program */
 const char *hr =
     "======================================================================\n";
 
+static void key_handler(enum key_codes code, enum key_states state);
 static void cmd_handler(uint8_t dlci, struct msgb *msg);
 
 int flag = 0;
@@ -70,21 +76,21 @@ static void flush_uart(void)
 static void device_poweroff(void)
 {
 	flush_uart();
-	writew(BBPU_MAGIC | RTC_BBPU_WRITE_EN,
-	       MTK_RTC_BBPU);
-	writew(1, MTK_RTC_WRTGR);
+	twl3025_power_off();
 }
 
 static void device_reset(void)
 {
 	flush_uart();
+	wdog_reset();
 }
 
-static void device_enter_loader(__unused unsigned char bootrom)
+static void device_enter_loader(unsigned char bootrom)
 {
 	flush_uart();
-	delay_ms(2000);
-	void (*entry)( void ) = (void (*)(void))0;
+
+	calypso_bootrom(bootrom);
+	void (*entry) (void) = (void (*)(void))0;
 	entry();
 }
 
@@ -104,6 +110,15 @@ static void loader_send_simple(struct msgb *msg, uint8_t dlci, uint8_t command)
 
 extern unsigned char _start;
 
+static void loader_send_init(uint8_t dlci)
+{
+	struct msgb *msg = sercomm_alloc_msgb(9);
+	msgb_put_u8(msg, LOADER_INIT);
+	msgb_put_u32(msg, 0);
+	msgb_put_u32(msg, &_start);
+	sercomm_sendmsg(dlci, msg);
+}
+
 flash_t the_flash;
 
 extern void putchar_asm(uint32_t c);
@@ -112,32 +127,82 @@ static const uint8_t phone_ack[] = { 0x1b, 0xf6, 0x02, 0x00, 0x41, 0x03, 0x42 };
 
 int main(void)
 {
+	/* Simulate a compal loader saying "ACK" */
+	int i = 0;
+	for (i = 0; i < sizeof(phone_ack); i++) {
+		putchar_asm(phone_ack[i]);
+	}
+
+	/* initialize board without interrupts */
 	board_init(0);
 	sercomm_uart = sercomm_get_uart();
 
-	/* Initialize HDLC subsystem */
-	sercomm_init();
-
 	/* Say hi */
-//	puts("\n\nOsmocomBB Loader (revision " GIT_REVISION ")\n");
-	puts("\n\nOsmocomBB Loader\n");
+	puts("\n\nOsmocomBB Loader (revision " GIT_REVISION ")\n");
 	puts(hr);
 
+	fb_clear();
+
+	fb_setfg(FB_COLOR_BLACK);
+	fb_setbg(FB_COLOR_WHITE);
+	fb_setfont(FB_FONT_HELVB14);
+
+	fb_gotoxy(2,20);
+	fb_putstr("loader",framebuffer->width-4);
+
+	fb_setfg(FB_COLOR_RED);
+	fb_setbg(FB_COLOR_BLUE);
+
+	fb_gotoxy(2,25);
+	fb_boxto(framebuffer->width-3,38);
+
+	fb_setfg(FB_COLOR_WHITE);
+	fb_setfont(FB_FONT_HELVR08);
+	fb_gotoxy(8,33);
+	fb_putstr("osmocom-bb",framebuffer->width-4);
+
+	fb_flush();
+
 	/* Identify environment */
-	printf("\nRunning on %s in environment %s\n", manifest_board,
+	printf("Running on %s in environment %s\n", manifest_board,
 	       manifest_environment);
 
-	printf("\nHW_CODE = 0x%04x", readw(MTK_CONFG_HW_CODE));
+	/* Initialize flash driver */
+	if (flash_init(&the_flash, 0)) {
+		puts("Failed to initialize flash!\n");
+	} else {
+		printf("Found flash of %d bytes at 0x%x with %d regions\n",
+		       the_flash.f_size, the_flash.f_base,
+		       the_flash.f_nregions);
+
+		int i;
+		for (i = 0; i < the_flash.f_nregions; i++) {
+			printf("  Region %d of %d pages with %d bytes each.\n",
+			       i,
+			       the_flash.f_regions[i].fr_bnum,
+			       the_flash.f_regions[i].fr_bsize);
+		}
+
+	}
+
+	/* Set up a key handler for powering off */
+	keypad_set_handler(&key_handler);
 
 	/* Set up loader communications */
 	sercomm_register_rx_cb(SC_DLCI_LOADER, &cmd_handler);
 
-	/* Wait for events */
+	/* Notify any running osmoload about our startup */
+	loader_send_init(SC_DLCI_LOADER);
 
+	/* Wait for events */
 	while (1) {
+		keypad_poll();
 		uart_poll(sercomm_uart);
 	}
 
+	/* NOT REACHED */
+
+	twl3025_power_off();
 }
 
 static void cmd_handler(uint8_t dlci, struct msgb *msg)
@@ -256,7 +321,7 @@ static void cmd_handler(uint8_t dlci, struct msgb *msg)
 		msgb_put_u32(reply, the_flash.f_size);
 		msgb_put_u8(reply, the_flash.f_nregions);
 
-		unsigned i;
+		int i;
 		for (i = 0; i < the_flash.f_nregions; i++) {
 			msgb_put_u32(reply, the_flash.f_regions[i].fr_bnum);
 			msgb_put_u32(reply, the_flash.f_regions[i].fr_bsize);
@@ -366,4 +431,23 @@ static void cmd_handler(uint8_t dlci, struct msgb *msg)
  out:
 
 	msgb_free(msg);
+}
+
+static void key_handler(enum key_codes code, enum key_states state)
+{
+	if (state != PRESSED)
+		return;
+
+	switch (code) {
+	case KEY_POWER:
+		puts("Powering off due to keypress.\n");
+		device_poweroff();
+		break;
+	case KEY_OK:
+		puts("Resetting due to keypress.\n");
+		device_reset();
+		break;
+	default:
+		break;
+	}
 }
