@@ -35,7 +35,7 @@ CCFLAGS_INC = -I$(BASE_DIR)/. -I$(BASE_DIR)/../../include
 CCFLAGS_WRN = -Wall -Wextra -Wcast-align -Wimplicit -Wunused -Wswitch -Wredundant-decls -Wreturn-type -Wshadow -Wnested-externs -Wbad-function-cast -Wsign-compare -Waggregate-return
 CCFLAGS_WRN = 
 CCFLAGS_WRN = -Os -ffunction-sections -gdwarf-2
-LD_PARAM    = -nostartfiles -nostdlib -nodefaultlibs --gc-sections --cref -Bstatic -Map loader.map
+LD_PARAM    = -nostartfiles -nostdlib -nodefaultlibs --gc-sections --cref -Bstatic -Map bins/loader.map
 #LD_PARAM    =
 OBJS        = objs/main.o objs/init.o objs/uart.o objs/start.ram.o objs/delay.o objs/printf.o \
               objs/ctors.o objs/ctype.o objs/div64.o objs/memcpy.o objs/memset.o \
