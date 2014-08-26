@@ -4,3 +4,4 @@ loader.elf
 loader.bin
 loader.map
 loader.size
+hexdiff
