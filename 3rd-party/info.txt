@@ -1,2 +1,7 @@
 CodeQuery
 osmocom-bb
+
+https://github.com/madsen/vbindiff
+http://freecode.com/projects/visuelhexdiff
+https://github.com/uroboro/Hexdiff
+http://furius.ca/xxdiff/

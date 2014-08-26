@@ -1,0 +1,8 @@
+*.o
+warn_err.txt
+loader.elf
+loader.bin
+loader.map
+loader.size
+hexdiff
+vbindiff
