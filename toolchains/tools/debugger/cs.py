@@ -49,7 +49,8 @@ def test_2():
     if gdb_error is not None:
         myscreen.addstr(12, 25, gdb_error)
     else:
-        myscreen.addstr(12, 25, str("RBX: " + gdb.parse_and_eval("$rbx")) )
+        #myscreen.addstr(12, 25, str("RBX: " + gdb.parse_and_eval("$rbx")) )
+        myscreen.addstr(12, 25, "PC: " + str(gdb.parse_and_eval("$pc")) )
 
     ## Define the topbar menus
     #file_menu = ("File", "file_func()")
