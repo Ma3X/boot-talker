@@ -12,6 +12,13 @@ def_proj="boot-talker"
 def_fldr="toolchains/arm-toolchain/downloads"
 def_user="root"
 
+# http://stackoverflow.com/questions/965053/extract-filename-and-extension-in-bash
+# http://stackoverflow.com/questions/3362920/bash-script-get-just-filename-from-path
+fname=$(basename $0)
+f__ext="${filename##*.}"
+f__nam="${filename%.*}"
+fslash="${fullfile##*/}"
+
 read -p "Enter server name? [$def_serv] " serv
 prot=$def_prot
 port=$def_port
@@ -20,11 +27,16 @@ proj=$def_proj
 fldr=$def_fldr
 user=$def_user
 
-read -p "Enter command? [push,pull,sync] " cmnd
+read -p "Enter command? [push,pull,pullall,sync] " cmnd
 case $cmnd in
     pull)
-      echo "pull: rsync -avz -e='$prot -p $port' $user@$serv:/$path/$proj/$fldr/ ."
-      rsync -avz -e="$prot -p $port" $user@$serv:/$path/$proj/$fldr/ .
+      echo "pull: rsync -avz --exclude-from 'exclude.sync' -e='$prot -p $port' $user@$serv:/$path/$proj/$fldr/ ."
+      rsync -avz --exclude-from "exclude.sync" -e="$prot -p $port" $user@$serv:/$path/$proj/$fldr/ .
+      exit 0
+      ;;
+    pullall)
+      echo "pull: rsync -avz --exclude $fname -e='$prot -p $port' $user@$serv:/$path/$proj/$fldr/ ."
+      rsync -avz --exclude $fname -e="$prot -p $port" $user@$serv:/$path/$proj/$fldr/ .
       exit 0
       ;;
     push)
