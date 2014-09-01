@@ -1,0 +1,129 @@
+#!/bin/bash
+
+#
+# This script for syncing many binary files out[side] repository commits
+#
+
+def_prot="ssh"
+def_serv="localhost"
+def_port="8022"
+def_path="mnt/repository/syncler"
+def_proj="boot-talker"
+def_fldr="toolchains/arm-toolchain/downloads"
+def_user="root"
+
+read -p "Enter server name? [$def_serv] " serv
+prot=$def_prot
+port=$def_port
+path=$def_path
+proj=$def_proj
+fldr=$def_fldr
+user=$def_user
+
+read -p "Enter command? [push,pull,sync] " cmnd
+case $cmnd in
+    pull)
+      echo "pull: rsync -avz -e='$prot -p $port' $user@$serv:/$path/$proj/$fldr/ ."
+      rsync -avz -e="$prot -p $port" $user@$serv:/$path/$proj/$fldr/ .
+      exit 0
+      ;;
+    push)
+      echo "push: rsync -avz -e='$prot -p $port' . $user@$serv:/$path/$proj/$fldr/"
+      rsync -avz -e="$prot -p $port" . $user@$serv:/$path/$proj/$fldr/
+      exit 0
+      ;;
+    sync)
+      echo "not realised"
+      exit 0
+      ;;
+    *)
+      echo "not realised"
+      exit 1
+      ;;
+esac
+
+exit 0
+
+#-----------------------------------------------------------------------
+
+usage()
+{
+cat << EOF
+
+This script for syncing many binary files out[side] repository commits
+
+usage: $0 options
+
+OPTIONS:
+   -h      Show this message
+   -t      Test type, can be 'test1' or 'test2'
+   -r      Server address
+   -p      Server root password
+   -v      Verbose
+EOF
+}
+
+HOST=
+PORT=
+PROJ=
+
+while getopts “hH:P:t:r:p:v” OPTION
+do
+     case $OPTION in
+         h)
+             usage
+             exit 1
+             ;;
+         H)
+             HOST=$OPTARG
+             IN=$HOST
+             arr=$(echo $IN | tr ":" "\n")
+             for x in $arr
+             do
+                 echo "> [$x]"
+             done
+             ;;
+         p)
+             PORT=$OPTARG
+             ;;
+         P)
+             PROJ=$OPTARG
+             ;;
+         t)
+             #TEST=$OPTARG
+             echo "TEST: $OPTARG"
+             ;;
+         r)
+             #SERVER=$OPTARG
+             echo "SERVER: $OPTARG"
+             ;;
+         v)
+             #VERBOSE=1
+             echo "VERBOSE: $OPTARG"
+             ;;
+         ?)
+             usage
+             exit
+             ;;
+     esac
+done
+
+sync_cmd="rsync"
+if ! type $sync_cmd > /dev/null 2>&1; then
+    echo "$sync_cmd command is not exists"
+else
+    echo "$sync_cmd command is exists"
+    echo "host is: $HOST"
+    echo "port is: $PORT"
+    echo "project is: $PROJ"
+fi
+
+#if [ ! -f 'rsync' ]; then
+#    echo "File not found!"
+#
+#    if [[ -L $FILE ]]; then
+#        echo "$FILE is a broken symlink!"
+#    else
+#        echo "$FILE does not exist!"
+#    fi
+#fi
