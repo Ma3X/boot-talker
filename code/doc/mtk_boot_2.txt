@@ -1,0 +1,65 @@
+root@phoenix:/home/projects/local/tests/boot-talker/binaries# ./talk.py 
+it is linux?
+sys.platform: linux2, os.name: posix
+
+Select: xml, boot, sgh, crc, usb, exit, quit, q
+
+enter command > boot
+Working with device communication...
+
+pre PumpMessages
+pre onWait
+[(u'ACTION', u'add'), (u'DEVLINKS', u'/dev/serial/by-id/usb-MediaTek_Inc_A290-if00 /dev/serial/by-path/pci-0000:00:14.0-usb-0:10:1.0'), (u'DEVNAME', u'/dev/ttyACM18'), (u'DEVPATH', u'/devices/pci0000:00/0000:00:14.0/usb1/1-10/1-10:1.0/tty/ttyACM18'), (u'ID_BUS', u'usb'), (u'ID_MM_CANDIDATE', u'1'), (u'ID_MODEL', u'A290'), (u'ID_MODEL_ENC', u'A290'), (u'ID_MODEL_FROM_DATABASE', u'Various Mobile Phones'), (u'ID_MODEL_ID', u'6000'), (u'ID_PATH', u'pci-0000:00:14.0-usb-0:10:1.0'), (u'ID_PATH_TAG', u'pci-0000_00_14_0-usb-0_10_1_0'), (u'ID_REVISION', u'0100'), (u'ID_SERIAL', u'MediaTek_Inc_A290'), (u'ID_TYPE', u'generic'), (u'ID_USB_CLASS_FROM_DATABASE', u'Communications'), (u'ID_USB_DRIVER', u'cdc_acm'), (u'ID_USB_INTERFACES', u':020201:0aff00:ffff00:'), (u'ID_USB_INTERFACE_NUM', u'00'), (u'ID_VENDOR', u'MediaTek_Inc'), (u'ID_VENDOR_ENC', u'MediaTek\\x20Inc'), (u'ID_VENDOR_FROM_DATABASE', u'LG Electronics, Inc.'), (u'ID_VENDOR_ID', u'1004'), (u'MAJOR', u'166'), (u'MINOR', u'18'), (u'SEQNUM', u'3342'), (u'SUBSYSTEM', u'tty'), (u'TAGS', u':systemd:'), (u'USEC_INITIALIZED', u'719987435')]
+device added
+tty: /dev/ttyACM18
+[(u'ACTION', u'add'), (u'DEVLINKS', u'/dev/serial/by-id/usb-MediaTek_Inc_A290-if02-port0 /dev/serial/by-path/pci-0000:00:14.0-usb-0:10:1.2-port0'), (u'DEVNAME', u'/dev/ttyUSB11'), (u'DEVPATH', u'/devices/pci0000:00/0000:00:14.0/usb1/1-10/1-10:1.2/ttyUSB11/tty/ttyUSB11'), (u'ID_BUS', u'usb'), (u'ID_MM_CANDIDATE', u'1'), (u'ID_MODEL', u'A290'), (u'ID_MODEL_ENC', u'A290'), (u'ID_MODEL_FROM_DATABASE', u'Various Mobile Phones'), (u'ID_MODEL_ID', u'6000'), (u'ID_PATH', u'pci-0000:00:14.0-usb-0:10:1.2'), (u'ID_PATH_TAG', u'pci-0000_00_14_0-usb-0_10_1_2'), (u'ID_REVISION', u'0100'), (u'ID_SERIAL', u'MediaTek_Inc_A290'), (u'ID_TYPE', u'generic'), (u'ID_USB_CLASS_FROM_DATABASE', u'Communications'), (u'ID_USB_DRIVER', u'qcaux'), (u'ID_USB_INTERFACES', u':020201:0aff00:ffff00:'), (u'ID_USB_INTERFACE_NUM', u'02'), (u'ID_VENDOR', u'MediaTek_Inc'), (u'ID_VENDOR_ENC', u'MediaTek\\x20Inc'), (u'ID_VENDOR_FROM_DATABASE', u'LG Electronics, Inc.'), (u'ID_VENDOR_ID', u'1004'), (u'MAJOR', u'188'), (u'MINOR', u'11'), (u'SEQNUM', u'3346'), (u'SUBSYSTEM', u'tty'), (u'TAGS', u':systemd:'), (u'USEC_INITIALIZED', u'719987811')]
+device added
+tty: /dev/ttyUSB11
+port_name is: /dev/ttyUSB11
+x.length: 10
+x[0][0]: A0
+serial port: /dev/ttyUSB11
+module PySerial version: 2.6
+
+work with UART port as MediaTek MCU
+
+           -> a0
+RX is L: 1 <- 5f
+           -> 0a
+RX is L: 1 <- f5
+           -> 50
+RX is L: 1 <- af
+           -> 05
+RX is L: 1 <- fa
+           -> a2
+RX is L: 1 <- 41
+RX is L: 3 <- 540d41
+           -> 80010000
+RX is L: 4 <- 80010000
+           -> 00000001
+
+mcu is: 80010000
+           -> a2
+           -> 80010008
+           -> 00000001
+
+mcu is: 80010000
+error communicating...: local variable 'xboot' referenced before assignment
+Traceback (most recent call last):
+  File "/mnt/other/tests/boot-talker/code/hktool/bootload/mediatek/__init__.py", line 203, in __init__
+    self.check()
+  File "/mnt/other/tests/boot-talker/code/hktool/bootload/mediatek/__init__.py", line 268, in check
+    for xlist in xboot:
+UnboundLocalError: local variable 'xboot' referenced before assignment
+Exception in thread Thread-2:
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/threading.py", line 810, in __bootstrap_inner
+    self.run()
+  File "/usr/lib/python2.7/threading.py", line 763, in run
+    self.__target(*self.__args, **self.__kwargs)
+  File "/mnt/other/tests/boot-talker/code/hktool/bootload/mediatek/__init__.py", line 80, in run
+    n = self.ser.inWaiting()
+  File "/usr/lib/python2.7/dist-packages/serial/serialposix.py", line 435, in inWaiting
+    s = fcntl.ioctl(self.fd, TIOCINQ, TIOCM_zero_str)
+TypeError: argument must be an int, or have a fileno() method.
+

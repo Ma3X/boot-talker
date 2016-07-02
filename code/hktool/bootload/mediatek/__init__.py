@@ -134,10 +134,10 @@ class Cout():
 # global initial boot commands
 x = [
       # initialize bootloading in device
-        ["A0",       "0A",       "params" ],
-        ["0A",       "A0",       "options"],
-        ["50",       "A0",       ""       ],
-        ["05",       "A0",       ""       ],
+        ["A0",       "5F",       "params" ],
+        ["0A",       "F5",       "options"],
+        ["50",       "AF",       ""       ],
+        ["05",       "FA",       ""       ],
       # get hardware version register
         ["A2",       "A2"      , ""       ],
         ["80010000", "80010000", ""       ],
@@ -166,10 +166,10 @@ class MTKBootload():
         self.port = port
         print "x.length: " + str(len(x))
         print "x[0][0]: " + str(x[0][0])
-        
+
         print "serial port: " + self.port
         print "module PySerial version: " + serial.VERSION
-        
+
         self.ser             = serial.Serial()
         self.ser.port        = self.port            # in windows: "2" - "COM3", "COM29", in linux: "/dev/ttyUSB0", "/dev/ttyS0"
         self.ser.baudrate    = 115200               # 9600, 115200, e.t.c.
@@ -178,7 +178,7 @@ class MTKBootload():
         self.ser.stopbits    = serial.STOPBITS_ONE  # number of stop bits
         self.ser.timeout     = None                 # block read
         self.ser.rtscts      = True                 # enable hardware (RTS/CTS) flow control (Hardware handshaking)
-        
+
         try:
             self.ser.open()
         except Exception, e:
@@ -237,26 +237,40 @@ class MTKBootload():
         #res = self.out.push("2200",     self.oin.onWait)
 
         # general mtk mcu boot code
-        for xlist in x:
+        try:
+          for xlist in x:
             res = self.out.push(xlist[0], self.oin.onWait)
+            #resS= binascii.b2a_hex(res)
+            #print "resS: " + resS
+            #if xlist[2] == 'params':
+            #    print "doubling..."
+            #    if resS.lower() <> xlist[1].lower():
+            #        res = self.out.push(xlist[0], self.oin.onWait)
             if xlist[2] == '+':
                 res = self.oin.onWait()
-            if set(xlist) == set(x[-1]):
-                mcu = binascii.b2a_hex(res)
-                print ''
-                print "mcu is: " + mcu
-                if mcu == '6253':
-                    print "run mcu " + mcu + " boot code"
-                    print ''
-                    from mt6253 import xboot
-                    from mt6253 import xdwag
-                    from hktool.bootload.mediatek import mt6253 as mtk_spec
-                if mcu == '6235':
-                    print "run mcu " + mcu + " boot code"
-                    print ''
-                    from mt6235 import xboot
-                    from mt6235 import xdwag
-                    from hktool.bootload.mediatek import mt6235 as mtk_spec
+            #if set(xlist) == set(x[-1]):
+            #    mcu = binascii.b2a_hex(res)
+            #    print ''
+            #    print "mcu is: " + mcu
+            #    if mcu == '6253':
+            #        print "run mcu " + mcu + " boot code"
+            #        print ''
+            #        from mt6253 import xboot
+            #        from mt6253 import xdwag
+            #        from hktool.bootload.mediatek import mt6253 as mtk_spec
+            #    if mcu == '6235':
+            #        print "run mcu " + mcu + " boot code"
+            #        print ''
+            #        from mt6235 import xboot
+            #        from mt6235 import xdwag
+            #        from hktool.bootload.mediatek import mt6235 as mtk_spec
+        except SerialException, e1:
+            print "error communicating...: " + str(e1)
+            self.ser.close()
+            import traceback
+            traceback.print_exc()
+            print "Exiting..."
+            os._exit(0)
 
         # specific mtk mcu boot code
         for xlist in xboot:
