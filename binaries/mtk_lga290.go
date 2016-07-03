@@ -1,1 +1,0 @@
-../codes/golang/mtk_lga290.go

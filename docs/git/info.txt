@@ -1,0 +1,34 @@
+For git coloring, use:
+
+  git config --global color.ui true
+
+For remove files deleted in folder from repository
+  git ls-files --deleted -z | xargs -0 git rm
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+If the identity used for this commit is wrong, you can fix it with:
+
+  git commit --amend --author='Your Name <you@example.com>'
+
+Assuming you want to blow away all commits from your branch (VERY DESTRUCTIVE):
+
+  git reset --hard origin/master
+
+Add for all with deleted:
+
+  git add --all .
+
+No check sertificate:
+
+  GIT_SSL_NO_VERIFY=true git clone https://url
+  cd <directory-of-the-clone>
+  git config http.sslVerify false

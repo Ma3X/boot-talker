@@ -1,0 +1,34 @@
+root@acer:/home/nouser/boot-talker/codes/golang# ./mtk_lga290.go
+Hello world!
+cwd: /home/nouser/boot-talker/codes/golang
+args: []
+Starting timer to signal done
+Starting timer to update filter
+Started listening on channel
+Using serial: /dev/ttyUSB0
+a0 -> count 1
+<- 5f
+0a -> count 1
+<- f5
+50 -> count 1
+<- af
+05 -> count 1
+<- fa
+a2 -> count 1
+<- a2
+80010000 -> count 4
+<- 80010000
+00000001 -> count 4
+<- 000000010000
+a2 -> count 1
+<- a2
+80010008 -> count 4
+<- 80010008
+00000001 -> count 4
+<- 000000010000
+Signalling done
+Removing filter
+Updating filter
+Channel closed
+
+root@acer:/home/nouser/boot-talker/codes/golang#

@@ -1,0 +1,7 @@
+root@acer:/home/nouser/boot-talker/binaries# bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+Cloning from https://github.com/moovweb/gvm.git to /root/.gvm
+No existing Go versions detected
+Installed GVM v1.0.22
+
+Please restart your terminal session or to get started right away run
+ `source /root/.gvm/scripts/gvm`

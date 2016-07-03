@@ -134,10 +134,10 @@ class Cout():
 # global initial boot commands
 x = [
       # initialize bootloading in device
-        ["A0",       "5F",       "params" ],
-        ["0A",       "F5",       "options"],
-        ["50",       "AF",       ""       ],
-        ["05",       "FA",       ""       ],
+        ["A0",       "5F",       "="      ],
+        ["0A",       "F5",       "="      ],
+        ["50",       "AF",       "="      ],
+        ["05",       "FA",       "="      ],
       # get hardware version register
         ["A2",       "A2"      , ""       ],
         ["80010000", "80010000", ""       ],
@@ -240,12 +240,15 @@ class MTKBootload():
         try:
           for xlist in x:
             res = self.out.push(xlist[0], self.oin.onWait)
-            #resS= binascii.b2a_hex(res)
-            #print "resS: " + resS
-            #if xlist[2] == 'params':
-            #    print "doubling..."
-            #    if resS.lower() <> xlist[1].lower():
-            #        res = self.out.push(xlist[0], self.oin.onWait)
+            resS= binascii.b2a_hex(res)
+            print "resS: " + resS
+            if xlist[2] == '=':
+                if resS.lower() <> xlist[1].lower():
+                    print "doubling..."
+                    res = self.oin.onWait()
+                    resS= binascii.b2a_hex(res)
+                    print "resZ: " + resS
+                    res = self.out.push(xlist[0], self.oin.onWait)
             if xlist[2] == '+':
                 res = self.oin.onWait()
             #if set(xlist) == set(x[-1]):
