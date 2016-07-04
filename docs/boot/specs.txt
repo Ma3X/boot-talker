@@ -1,0 +1,7 @@
+http://bb.osmocom.org/trac/wiki/Hardware/Phones
+http://bb.osmocom.org/trac/wiki/SciphoneDreamG2
+http://bb.osmocom.org/trac/wiki/MT6235
+http://bb.osmocom.org/trac/wiki/MT6253
+
+http://mediatek-club.ru/load/for_repair_phones_mediatek_datasheets/datasheet_mt6235/4-1-0-24
+http://mediatek-club.ru/load/for_repair_phones_mediatek_datasheets/datasheet_mediatek_mtk6253/4-1-0-12
