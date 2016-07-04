@@ -21,6 +21,16 @@ import (
     //_"github.com/mikepb/go-serial"
 )
 
+const CLR_0 = "\x1b[30;1m"
+const CLR_R = "\x1b[31;1m"
+const CLR_G = "\x1b[32;1m"
+const CLR_Y = "\x1b[33;1m"
+const CLR_B = "\x1b[34;1m"
+const CLR_M = "\x1b[35;1m"
+const CLR_C = "\x1b[36;1m"
+const CLR_W = "\x1b[37;1m"
+const CLR_N = "\x1b[0m"
+
 func if_err() {
     fmt.Println("error open serial port: ")
     fmt.Println("for full reset serial device you must reload drivers:")
@@ -37,7 +47,7 @@ func serW(s *serial.Port, ss string) {
     if e != nil {
         log.Fatal(e)
     }
-    fmt.Printf("%x ->", hh)
+    fmt.Printf("%x "+CLR_R+"->"+CLR_N, hh)
     //n, err := s.Write([]byte("\x0a"))
     n, err := s.Write(hh)
     if err != nil {
@@ -54,7 +64,7 @@ func serR(s *serial.Port) (ss string, e error) {
     }
     //log.Printf("%q", buf[:n])
     //fmt.Printf("<- %x", buf[:n])
-    fmt.Println("<-", hex.EncodeToString(buf[:n]))
+    fmt.Println(CLR_G+"<-"+CLR_N, hex.EncodeToString(buf[:n]))
     //fmt.Println("<-", fmt.Sprintf("%x", buf[:n]))
 
     return hex.EncodeToString(buf[:n]), err
@@ -84,15 +94,35 @@ func ser(ss string){
     serW(s, "00000001"); serR(s) // +
                          serR(s)
 
+    fmt.Println("check software register in address:", "0x80010008")
     serW(s, "a2");       serR(s) // a2
-    serW(s, "A0000004"); serR(s) // A0000004
+    serW(s, "80010008"); serR(s) // A0000004
     serW(s, "00000001"); serR(s) // +
-                         serR(s)
+             res, err := serR(s)
+    mcu := "unknown"
+    switch res {
+    case "6235":
+        mcu = "mt6235"
+        fmt.Println("mcu is:", mcu)
+    case "6253":
+        mcu = "mt6253"
+        fmt.Println("mcu is:", mcu)
+    default:
+        fmt.Println("check not found in 0x80010008")
+    }
 
+    fmt.Println("check software register in address:", "0xA0000008")
     serW(s, "a2");       serR(s) // a2
     serW(s, "A0000008"); serR(s) // A0000008
     serW(s, "00000001"); serR(s) // +
-                         serR(s)
+             res, err  = serR(s)
+    switch res {
+    case "6261":
+        mcu = "mt6261x"
+        fmt.Println("mcu is:", mcu)
+    default:
+        fmt.Println("check not found in 0xA0000008")
+    }
 
     s.Close()
 }
