@@ -1,0 +1,14 @@
+Go Syntax Highlighting and Other Text Editors and IDEs Extensions
+http://go-lang.cat-v.org/text-editors/
+
+Adding Go Syntax Highlighting To Vim | Bringing All The Fail
+https://failicide.wordpress.com/2015/01/07/adding-go-syntax-highlighting-to-vim/
+
+go.vim - Syntax file for the Go programming language : vim online
+http://www.vim.org/scripts/script.php?script_id=2854
+
+GitHub - fatih/vim-go: Go development plugin for Vim
+https://github.com/fatih/vim-go
+
+go - Add GoLang syntax highlighting for VIM - Stack Overflow
+http://stackoverflow.com/questions/15579822/add-golang-syntax-highlighting-for-vim

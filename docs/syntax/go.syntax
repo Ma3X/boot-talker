@@ -1,0 +1,113 @@
+# Based on http://go-lang.cat-v.org/text-editors/mcedit/go.syntax
+context default
+# keywords
+    keyword whole break magenta
+    keyword whole case magenta
+    keyword whole chan magenta
+    keyword whole const magenta
+    keyword whole continue magenta
+    keyword whole default magenta
+    keyword whole defer magenta
+    keyword whole else magenta
+    keyword whole fallthrough magenta
+    keyword whole for magenta
+    keyword whole func magenta
+    keyword whole go magenta
+    keyword whole goto magenta
+    keyword whole if magenta
+    keyword whole import magenta
+    keyword whole interface magenta
+    keyword whole map magenta
+    keyword whole package magenta
+    keyword whole range magenta
+    keyword whole return magenta
+    keyword whole select magenta
+    keyword whole struct magenta
+    keyword whole switch magenta
+    keyword whole type magenta
+    keyword whole var magenta
+# builtin types
+    keyword whole uint8 yellow
+    keyword whole uint16 yellow
+    keyword whole uint32 yellow
+    keyword whole uint64 yellow
+    keyword whole int8 yellow
+    keyword whole int16 yellow
+    keyword whole int32 yellow
+    keyword whole int64 yellow
+    keyword whole float32 yellow
+    keyword whole float64 yellow
+    keyword whole byte yellow
+    keyword whole uint yellow
+    keyword whole int yellow
+    keyword whole float yellow
+    keyword whole uintptr yellow
+    keyword whole string yellow
+    keyword whole bool yellow
+# builtin functions
+    keyword whole nil yellow
+    keyword whole true yellow
+    keyword whole false yellow
+    keyword whole iota yellow
+    keyword whole cap yellow
+    keyword whole close yellow
+    keyword whole closed yellow
+    keyword whole len yellow
+    keyword whole make yellow
+    keyword whole new yellow
+    keyword whole panic yellow
+    keyword whole panicln yellow
+    keyword whole print yellow
+    keyword whole println yellow
+# special functions
+    keyword whole init yellow
+    keyword whole main yellow
+# comment chars
+    keyword /\* brown
+    keyword \*/ brown
+    keyword // brown
+# punctuation, operator chars
+    keyword <- brightmagenta
+    keyword \+ brightcyan
+    keyword & brightcyan
+    keyword ( brightcyan
+    keyword ) brightcyan
+    keyword - brightcyan
+    keyword | brightcyan
+    keyword < brightcyan
+    keyword [ brightcyan
+    keyword ] brightcyan
+    keyword \* brightcyan
+    keyword ^ brightcyan
+    keyword > brightcyan
+    keyword { brightcyan
+    keyword } brightcyan
+    keyword / brightcyan
+    keyword = brightcyan
+    keyword , brightcyan
+    keyword ; brightcyan
+    keyword % brightcyan
+    keyword ! brightcyan
+    keyword . brightcyan
+    keyword : brightcyan
+
+# comment
+context exclusive /\* \*/ brown
+spellcheck
+context exclusive // \n brown
+spellcheck
+
+# char, raw string, string
+context ' ' gray
+    keyword \\\{abfnrtv\\'"\} green
+    keyword \\\{0123\}\{01234567\}\{01234567\} green
+    keyword \\x\{0123456789abcdefABCDEF\}\{0123456789abcdefABCDEF\} green
+    keyword \\u\{0123456789abcdefABCDEF\}\{0123456789abcdefABCDEF\}\{0123456789abcdefABCDEF\}\{0123456789abcdefABCDEF\} green
+    keyword \\U\{0123456789abcdefABCDEF\}\{0123456789abcdefABCDEF\}\{0123456789abcdefABCDEF\}\{0123456789abcdefABCDEF\}\{0123456789abcdefABCDEF\}\{0123456789abcdefABCDEF\}\{0123456789abcdefABCDEF\}\{0123456789abcdefABCDEF\} green
+context ` ` brightgreen
+context " " brightgreen
+    keyword \\\{abfnrtv\\'"\} green
+    keyword \\\{0123\}\{01234567\}\{01234567\} green
+    keyword \\x\{0123456789abcdefABCDEF\}\{0123456789abcdefABCDEF\} green
+    keyword \\u\{0123456789abcdefABCDEF\}\{0123456789abcdefABCDEF\}\{0123456789abcdefABCDEF\}\{0123456789abcdefABCDEF\} green
+    keyword \\U\{0123456789abcdefABCDEF\}\{0123456789abcdefABCDEF\}\{0123456789abcdefABCDEF\}\{0123456789abcdefABCDEF\}\{0123456789abcdefABCDEF\}\{0123456789abcdefABCDEF\}\{0123456789abcdefABCDEF\}\{0123456789abcdefABCDEF\} green
