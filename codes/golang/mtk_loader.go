@@ -21,6 +21,17 @@ import (
     //_"github.com/mikepb/go-serial"
 )
 
+func if_err() {
+    fmt.Println("error open serial port: ")
+    fmt.Println("for full reset serial device you must reload drivers:")
+    fmt.Println("                                   ")
+    fmt.Println("   cat /proc/tty/drivers           ")
+    fmt.Println("   lsmod | grep usbserial          ")
+    fmt.Println("   sudo modprobe -r pl2303 qcaux   ")
+    fmt.Println("   sudo modprobe -r usbserial      ")
+    fmt.Println("                                   ")
+}
+
 func serW(s *serial.Port, ss string) {
     hh, e := hex.DecodeString(ss)
     if e != nil {
@@ -64,21 +75,31 @@ func ser(ss string){
     serW(s, "50");       serR(s) // af
     serW(s, "05");       serR(s) // fa
 
-    serW(s, "a2");       serR(s) // a2
-    //serW(s, "80010000"); serR(s) // 80010000
-    serW(s, "A0000000"); serR(s) // A0010000
-    serW(s, "00000001"); time.Sleep(time.Second/8); serR(s) // +
+    //time.Sleep(time.Second/8);
+    ////serW(s, "80010000"); serR(s) // 80010000
+    //serW(s, "80010008"); serR(s) // 80010008
 
     serW(s, "a2");       serR(s) // a2
-    //serW(s, "80010008"); serR(s) // 80010008
-    serW(s, "A0000008"); serR(s) // A0010008
-    serW(s, "00000001"); time.Sleep(time.Second/8); serR(s) // +
+    serW(s, "A0000000"); serR(s) // A0010000
+    serW(s, "00000001"); serR(s) // +
+                         serR(s)
+
+    serW(s, "a2");       serR(s) // a2
+    serW(s, "A0000004"); serR(s) // A0000004
+    serW(s, "00000001"); serR(s) // +
+                         serR(s)
+
+    serW(s, "a2");       serR(s) // a2
+    serW(s, "A0000008"); serR(s) // A0000008
+    serW(s, "00000001"); serR(s) // +
+                         serR(s)
 
     s.Close()
 }
 
 func main() {
-    fmt.Println("Hello world!")
+    fmt.Println("Working with UART port as MediaTek MCU")
+    fmt.Println("")
     cwd, _ := os.Getwd()
     fmt.Println("cwd:", cwd)
     fmt.Println("args:", os.Args[1:])
