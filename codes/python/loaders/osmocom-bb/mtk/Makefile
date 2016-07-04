@@ -21,7 +21,7 @@
 #  $> cd boot-talker/code/hktool/bootload/mediatek
 #  $> ln -s ../../../loaders/osmocom-bb/mtk/bins/loader.bin ./mt6253_ram.bin
 
-BASE_DIR=../../../../3rd-party/osmocom-bb/firmwares/mt62xx
+BASE_DIR=../../../../../3rd-party/osmocom-bb/firmwares/mt62xx
 
 DEFP = -std=gnu99 -Wl,-Tlnkscript -Wl,-static -Wl,--gc-sections -nostartfiles -nostdlib -Wl,-Map,vsprintf.map
 DEFP = -Wunused -Wswitch -Wredundant-decls -Wreturn-type -Wshadow -Wnested-externs -Wbad-function-cast -Wsign-compare -Waggregate-return -Os
