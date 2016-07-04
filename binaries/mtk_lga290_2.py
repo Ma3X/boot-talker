@@ -1,1 +1,1 @@
-../code/mtk_lga290_2.py
+../codes/python/mtk_lga290_2.py

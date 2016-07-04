@@ -65,12 +65,14 @@ func ser(ss string){
     serW(s, "05");       serR(s) // fa
 
     serW(s, "a2");       serR(s) // a2
-    serW(s, "80010000"); serR(s) // 80010000
-    serW(s, "00000001"); serR(s) // +
+    //serW(s, "80010000"); serR(s) // 80010000
+    serW(s, "A0000000"); serR(s) // A0010000
+    serW(s, "00000001"); time.Sleep(time.Second/8); serR(s) // +
 
     serW(s, "a2");       serR(s) // a2
-    serW(s, "80010008"); serR(s) // 80010008
-    serW(s, "00000001"); serR(s) // +
+    //serW(s, "80010008"); serR(s) // 80010008
+    serW(s, "A0000008"); serR(s) // A0010008
+    serW(s, "00000001"); time.Sleep(time.Second/8); serR(s) // +
 
     s.Close()
 }

@@ -1,1 +1,1 @@
-../code/talk.py
+../codes/python/talk.py

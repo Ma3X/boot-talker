@@ -1,1 +1,1 @@
-../code/mtk_texet_tm-510r.py
+../codes/python/mtk_texet_tm-510r.py
