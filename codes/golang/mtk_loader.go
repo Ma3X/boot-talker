@@ -16,6 +16,7 @@ import (
     "strings"
     "log"
     "encoding/hex"
+    "path/filepath"
     "github.com/jochenvg/go-udev"
     "github.com/tarm/serial"
     "github.com/abiosoft/ishell"
@@ -106,6 +107,47 @@ func serB(s *serial.Port) {
                              serR(s)
 }
 
+func shl(s *serial.Port, mcu string) {
+          // create new shell.
+          // by default, new shell includes 'exit', 'help' and 'clear' commands.
+          shell := ishell.New()
+
+          // display welcome info.
+          if mcu != "" {
+              shell.Println(CLR_G+"interactive shell"+CLR_N+" for "+CLR_Y+mcu+CLR_N)
+          } else {
+              shell.Println(CLR_G+"interactive shell"+CLR_N)
+          }
+
+          // register a function for "greet" command.
+          shell.Register("greet", func(args ...string) (string, error) {
+            name := "Stranger"
+            if len(args) > 0 {
+                name = strings.Join(args, " ")
+            }
+            return "Hello "+name, nil
+          })
+
+          // register a function for "read" command.
+          shell.Register("read", func(args ...string) (string, error) {
+            //name := "Stranger"
+            //if len(args) > 0 {
+            //    name = strings.Join(args, " ")
+            //}
+
+            // read first memory address
+            if s != nil {
+                serB(s)
+                return "Success", nil
+            } else {
+                return CLR_C+"Not connected to MCU"+CLR_N, nil
+            }
+          })
+
+          // start shell
+          shell.Start()
+}
+
 func ser(ss string){
     fmt.Println("Using serial:", ss)
 
@@ -191,49 +233,13 @@ func ser(ss string){
     }
 
     if watchdog == "off" {
-        // create new shell.
-          // by default, new shell includes 'exit', 'help' and 'clear' commands.
-          shell := ishell.New()
-
-          // display welcome info.
-          shell.Println(CLR_G+"interactive shell"+CLR_N+" for "+CLR_Y+mcu+CLR_N)
-
-          // register a function for "greet" command.
-          shell.Register("greet", func(args ...string) (string, error) {
-            name := "Stranger"
-            if len(args) > 0 {
-                name = strings.Join(args, " ")
-            }
-            return "Hello "+name, nil
-          })
-
-          // register a function for "read" command.
-          shell.Register("read", func(args ...string) (string, error) {
-            //name := "Stranger"
-            //if len(args) > 0 {
-            //    name = strings.Join(args, " ")
-            //}
-
-            // read first memory address
-            serB(s)
-
-            return "Success", nil
-          })
-
-          // start shell
-          shell.Start()
+        shl(s, mcu)
     }
 
     s.Close()
 }
 
-func main() {
-    fmt.Println("Working with UART port as MediaTek MCU")
-    fmt.Println("")
-    cwd, _ := os.Getwd()
-    fmt.Println("cwd:", cwd)
-    fmt.Println("args:", os.Args[1:])
-
+func usb_load() {
     // Create Udev and Monitor
     u := udev.Udev{}
     m := u.NewMonitorFromNetlink("udev")
@@ -252,9 +258,9 @@ func main() {
     var wg sync.WaitGroup
     wg.Add(3)
     go func() {
-	fmt.Println("Started listening on channel")
-	for d := range ch {
-		//fmt.Println("Event:", 
+        fmt.Println("Started listening on channel")
+        for d := range ch {
+                //fmt.Println("Event:", 
                 //            "\nSyspath:",  d.Syspath(),
                 //            "\nAction:",   d.Action(),
                 //            "\nDevtype:",  d.Devtype(),
@@ -269,27 +275,68 @@ func main() {
                     ser(ss)
                   }
                 }
-	}
-	fmt.Println("Channel closed")
-	wg.Done()
+        }
+        fmt.Println("Channel closed")
+        wg.Done()
     }()
     go func() {
-	fmt.Println("Starting timer to update filter")
-	<-time.After(20 * time.Second)
-	fmt.Println("Removing filter")
-	m.FilterRemove()
-	fmt.Println("Updating filter")
-	m.FilterUpdate()
-	wg.Done()
+        fmt.Println("Starting timer to update filter")
+        <-time.After(20 * time.Second)
+        fmt.Println("Removing filter")
+        m.FilterRemove()
+        fmt.Println("Updating filter")
+        m.FilterUpdate()
+        wg.Done()
     }()
     go func() {
-	fmt.Println("Starting timer to signal done")
-	<-time.After(20 * time.Second)
-	fmt.Println("Signalling done")
-	close(done)
-	wg.Done()
+        fmt.Println("Starting timer to signal done")
+        <-time.After(20 * time.Second)
+        fmt.Println("Signalling done")
+        close(done)
+        wg.Done()
     }()
     wg.Wait()
+}
+
+func view_help() {
+    fmt.Println("")
+    fmt.Println(CLR_M+"MCU Loader"+CLR_N, CLR_B+"v0.1"+CLR_N)
+    fmt.Println("")
+    fmt.Println("  use:", CLR_G+"./"+filepath.Base(os.Args[0])+CLR_N, "["+CLR_Y+"shell"+CLR_N+" | "+CLR_Y+"usb"+CLR_N+" | "+CLR_Y+"help"+CLR_N+"]")
+    fmt.Println("")
+    fmt.Println("        "+CLR_Y+"shell"+CLR_N+" - interactive shell")
+    fmt.Println("        "+CLR_Y+"usb  "+CLR_N+" - autoconnect over usb")
+    fmt.Println("        "+CLR_Y+"help "+CLR_N+" - this help information")
+    fmt.Println("")
+}
+
+func main() {
+
+    if len(os.Args) > 1 {
+        switch os.Args[1] {
+          case "shell":
+              cwd, _ := os.Getwd()
+              fmt.Println("cwd:", cwd)
+              fmt.Println("args:", os.Args[1:])
+              fmt.Println(len(os.Args))
+              fmt.Println("")
+              shl(nil, "")
+          case "usb":
+              fmt.Println("Working with UART port as MediaTek MCU")
+              fmt.Println("")
+              usb_load()
+          case "help":
+              view_help()
+          default:
+              fmt.Println("")
+              fmt.Println(CLR_W+"argument not recognized"+CLR_N)
+              view_help()
+              os.Exit(1)
+        }
+    } else {
+        view_help()
+    }
+    os.Exit(0)
 }
 
 /*
