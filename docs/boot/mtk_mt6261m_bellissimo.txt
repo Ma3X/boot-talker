@@ -1,0 +1,47 @@
+1. при включеном usb!!! вырубаем телеф на запущенном: # ./mtk_loader.go usb
+2. прогружаемся... а затем выходим!!!
+3. казалось бы... порт должен вырубиться. а на самом деле он остается: # ./mtk_loader.go serial
+4. и можно в любой момент подрубиться # ./mtk_loader.go serial /dev/ttyUSBXX
+5. и вычитать всю инфу которая интересует. и прогрузить туда все! не задумываясь о watchdog-таймерах!!!
+!. по крайней мере: на Alcatel One Touch 1013D
+
+root@phoenix:/home/projects/local/tests/boot-talker/codes/golang# ./mtk_loader.go serial /dev/ttyUSB49
+Using serial: /dev/ttyUSB49
+a0 -> count 1
+<- a0
+0a -> count 1
+<- 0a
+50 -> count 1
+<- 50
+05 -> count 1
+<- 05
+check software register in address: 0x80010008
+a2 -> count 1
+<- a2
+80010008 -> count 4
+<- 80010008
+00000001 -> count 4
+<- 00000001
+<- 0000
+check not found in 0x80010008
+check software register in address: 0xA0000008
+a2 -> count 1
+<- a2
+a0000008 -> count 4
+<- a0000008
+00000001 -> count 4
+<- 00000001
+<- 6261
+mcu is: mt6261x 
+a2 -> count 1
+<- a2
+a0000000 -> count 4
+<- a0000000
+00000001 -> count 4
+<- 00000001
+<- cb01
+
+interactive shell for mt6261x
+>>>
+
+!!!!!!!!!!!!!!

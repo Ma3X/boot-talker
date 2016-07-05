@@ -231,6 +231,10 @@ func ser(ss string){
         serW(s, "00000001"); serR(s) // 00000001
         serW(s, "2200");     serR(s) // 2200
         watchdog = "off"
+
+      case "mt6261x":
+        watchdog = "off"
+
       default:
         fmt.Println(CLR_R+"no find watchdog"+CLR_N)
     }
@@ -537,7 +541,11 @@ func main() {
               usb_load()
           case "serial":
               //L.main()
-              serList()
+              if len(os.Args) > 2 {
+                  ser(os.Args[2])
+              } else {
+                  serList()
+              }
           case "help":
               view_help()
           default:
