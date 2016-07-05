@@ -180,7 +180,7 @@ func ser(ss string){
     // block watchdog timer
     watchdog := "on"
     switch mcu {
-      case "mt6235":
+      case "mt6235","mt6253":
         serW(s, "a1");       serR(s) // a1
         serW(s, "80030000"); serR(s) // 80030000
         serW(s, "00000001"); serR(s) // 00000001
@@ -208,7 +208,7 @@ func ser(ss string){
           })
 
           // register a function for "read" command.
-          shell.Register("greet", func(args ...string) (string, error) {
+          shell.Register("read", func(args ...string) (string, error) {
             //name := "Stranger"
             //if len(args) > 0 {
             //    name = strings.Join(args, " ")
