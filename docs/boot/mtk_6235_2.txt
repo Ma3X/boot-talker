@@ -1,0 +1,158 @@
+root@phoenix:/home/projects/local/tests/boot-talker/codes/golang# ./mtk_loader.go 
+Working with UART port as MediaTek MCU
+
+cwd: /home/projects/local/tests/boot-talker/codes/golang
+args: []
+Starting timer to signal done
+Started listening on channel
+Starting timer to update filter
+Using serial: /dev/ttyUSB46
+a0 -> count 1
+<- 5f
+0a -> count 1
+<- f5
+50 -> count 1
+<- af
+05 -> count 1
+<- fa
+check software register in address: 0x80010008
+a2 -> count 1
+<- a2
+80010008 -> count 4
+<- 80010008
+00000001 -> count 4
+<- 00000001
+<- 6235
+mcu is: mt6235 
+a2 -> count 1
+<- a2
+80010000 -> count 4
+<- 80010000
+00000001 -> count 4
+<- 00000001
+5: mt6235
+<- 8c00
+6: mt6235
+a1 -> count 1
+<- a1
+80030000 -> count 4
+<- 80030000
+00000001 -> count 4
+<- 00000001
+2200 -> count 2
+<- 2200
+interactive shell for mt6235
+>>> read
+Warning: No handler registered for input.
+>>> Signalling done
+Removing filter
+Updating filter
+>>> 
+>>> exit
+Channel closed
+
+
+------------------------
+
+root@phoenix:/home/projects/local/tests/boot-talker/codes/golang# ./mtk_loader.go
+Working with UART port as MediaTek MCU
+
+cwd: /home/projects/local/tests/boot-talker/codes/golang
+args: []
+Starting timer to signal done
+Started listening on channel
+Starting timer to update filter
+Using serial: /dev/ttyUSB37
+a0 -> count 1
+<- 5f
+0a -> count 1
+<- f5
+50 -> count 1
+<- af
+05 -> count 1
+<- fa
+check software register in address: 0x80010008
+a2 -> count 1
+<- a2
+80010008 -> count 4
+<- 80010008
+00000001 -> count 4
+<- 00000001
+<- 6235
+mcu is: mt6235 
+a2 -> count 1
+<- a2
+80010000 -> count 4
+<- 80010000
+00000001 -> count 4
+<- 00000001
+<- 8c00
+a2 -> count 1
+<- a2
+00000000 -> count 4
+<- 00000000
+00000004 -> count 4
+<- 00000004
+<- 0000000000000000
+a2 -> count 1
+<- a2
+00000004 -> count 4
+<- 00000004
+00000004 -> count 4
+<- 00000004
+<- 0000000000000000
+a2 -> count 1
+<- a2
+00000008 -> count 4
+<- 00000008
+00000004 -> count 4
+<- 00000004
+<- 0000000000004000
+a2 -> count 1
+<- a2
+0000000c -> count 4
+<- 0000000c
+00000004 -> count 4
+<- 00000004
+<- 0000400000000000
+a2 -> count 1
+<- a2
+00000010 -> count 4
+<- 00000010
+00000004 -> count 4
+<- 00000004
+<- 0000000000000000
+a2 -> count 1
+<- a2
+00000014 -> count 4
+<- 00000014
+00000004 -> count 4
+<- 00000004
+<- 0000000000000000
+a2 -> count 1
+<- a2
+00000018 -> count 4
+<- 00000018
+00000004 -> count 4
+<- 00000004
+<- 0000000000000000
+a2 -> count 1
+<- a2
+0000001c -> count 4
+<- 0000001c
+00000004 -> count 4
+<- 00000004
+<- 0000000000000000
+check software register in address: 0xA0000008
+a2 -> count 1
+<- a2
+a0000008 -> count 4
+<- a0000008
+00000001 -> count 4
+<- 00000001
+<- 7a36
+check not found in 0xA0000008
+Signalling done
+Removing filter
+Updating filter
+Channel closed

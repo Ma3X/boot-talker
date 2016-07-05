@@ -18,6 +18,7 @@ import (
     "encoding/hex"
     "github.com/jochenvg/go-udev"
     "github.com/tarm/serial"
+    "github.com/abiosoft/ishell"
     //_"github.com/mikepb/go-serial"
 )
 
@@ -70,6 +71,41 @@ func serR(s *serial.Port) (ss string, e error) {
     return hex.EncodeToString(buf[:n]), err
 }
 
+func serB(s *serial.Port) {
+        serW(s, "a2");       serR(s) // a2
+        serW(s, "00000000"); serR(s) // A0010000
+        serW(s, "00000004"); serR(s) // +
+                             serR(s)
+        serW(s, "a2");       serR(s) // a2
+        serW(s, "00000004"); serR(s) // A0010004
+        serW(s, "00000004"); serR(s) // +
+                             serR(s)
+        serW(s, "a2");       serR(s) // a2
+        serW(s, "00000008"); serR(s) // A0010008
+        serW(s, "00000004"); serR(s) // +
+                             serR(s)
+        serW(s, "a2");       serR(s) // a2
+        serW(s, "0000000C"); serR(s) // A0010000
+        serW(s, "00000004"); serR(s) // +
+                             serR(s)
+        serW(s, "a2");       serR(s) // a2
+        serW(s, "00000010"); serR(s) // A0010000
+        serW(s, "00000004"); serR(s) // +
+                             serR(s)
+        serW(s, "a2");       serR(s) // a2
+        serW(s, "00000014"); serR(s) // A0010004
+        serW(s, "00000004"); serR(s) // +
+                             serR(s)
+        serW(s, "a2");       serR(s) // a2
+        serW(s, "00000018"); serR(s) // A0010008
+        serW(s, "00000004"); serR(s) // +
+                             serR(s)
+        serW(s, "a2");       serR(s) // a2
+        serW(s, "0000001C"); serR(s) // A0010000
+        serW(s, "00000004"); serR(s) // +
+                             serR(s)
+}
+
 func ser(ss string){
     fmt.Println("Using serial:", ss)
 
@@ -80,48 +116,112 @@ func ser(ss string){
     }
 
     //time.Sleep(time.Second/2)
+
+    // swap-char-gaming ("dress code")
     serW(s, "a0");       serR(s) // 5f
     serW(s, "0a");       serR(s) // f5
     serW(s, "50");       serR(s) // af
     serW(s, "05");       serR(s) // fa
 
-    //time.Sleep(time.Second/8);
-    ////serW(s, "80010000"); serR(s) // 80010000
-    //serW(s, "80010008"); serR(s) // 80010008
-
-    serW(s, "a2");       serR(s) // a2
-    serW(s, "A0000000"); serR(s) // A0010000
-    serW(s, "00000001"); serR(s) // +
-                         serR(s)
-
-    fmt.Println("check software register in address:", "0x80010008")
-    serW(s, "a2");       serR(s) // a2
-    serW(s, "80010008"); serR(s) // A0000004
-    serW(s, "00000001"); serR(s) // +
-             res, err := serR(s)
+    // checking mcu model
     mcu := "unknown"
-    switch res {
-    case "6235":
+    // ckeck N1: in 0x80010008
+    if mcu == "unknown" {
+      fmt.Println("check software register in address:", "0x80010008")
+      serW(s, "a2");       serR(s) // a2
+      serW(s, "80010008"); serR(s) // A0000004
+      serW(s, "00000001"); serR(s) // +
+               res, _   := serR(s)
+      switch res {
+      case "6235":
         mcu = "mt6235"
-        fmt.Println("mcu is:", mcu)
-    case "6253":
+        fmt.Println("mcu is:"+CLR_Y, mcu, CLR_N)
+
+        serW(s, "a2");       serR(s) // a2
+        serW(s, "80010000"); serR(s) // 80010000
+        serW(s, "00000001"); serR(s) // +
+        fmt.Println("5:",mcu)
+                             serR(s)
+        fmt.Println("6:",mcu)
+      case "6253":
         mcu = "mt6253"
-        fmt.Println("mcu is:", mcu)
-    default:
+        fmt.Println("mcu is:"+CLR_Y, mcu, CLR_N)
+
+        serW(s, "a2");       serR(s) // a2
+        serW(s, "80010000"); serR(s) // 80010000
+        serW(s, "00000001"); serR(s) // +
+                             serR(s)
+      default:
         fmt.Println("check not found in 0x80010008")
+      }
     }
 
-    fmt.Println("check software register in address:", "0xA0000008")
-    serW(s, "a2");       serR(s) // a2
-    serW(s, "A0000008"); serR(s) // A0000008
-    serW(s, "00000001"); serR(s) // +
-             res, err  = serR(s)
-    switch res {
-    case "6261":
+    // ckeck N2: in 0xA0000008
+    if mcu == "unknown" {
+      fmt.Println("check software register in address:", "0xA0000008")
+      serW(s, "a2");       serR(s) // a2
+      serW(s, "A0000008"); serR(s) // A0000008
+      serW(s, "00000001"); serR(s) // +
+               res, _   := serR(s)
+      switch res {
+      case "6261":
         mcu = "mt6261x"
-        fmt.Println("mcu is:", mcu)
-    default:
+        fmt.Println("mcu is:"+CLR_Y, mcu, CLR_N)
+
+        serW(s, "a2");       serR(s) // a2
+        serW(s, "A0000000"); serR(s) // A0000000
+        serW(s, "00000001"); serR(s) // +
+                             serR(s)
+      default:
         fmt.Println("check not found in 0xA0000008")
+      }
+    }
+
+    // block watchdog timer
+    watchdog := "on"
+    switch mcu {
+      case "mt6235":
+        serW(s, "a1");       serR(s) // a1
+        serW(s, "80030000"); serR(s) // 80030000
+        serW(s, "00000001"); serR(s) // 00000001
+        serW(s, "2200");     serR(s) // 2200
+        watchdog = "off"
+      default:
+        fmt.Println(CLR_R+"no find watchdog"+CLR_N)
+    }
+
+    if watchdog == "off" {
+        // create new shell.
+          // by default, new shell includes 'exit', 'help' and 'clear' commands.
+          shell := ishell.New()
+
+          // display welcome info.
+          shell.Println(CLR_G+"interactive shell"+CLR_N+" for "+CLR_Y+mcu+CLR_N)
+
+          // register a function for "greet" command.
+          shell.Register("greet", func(args ...string) (string, error) {
+            name := "Stranger"
+            if len(args) > 0 {
+                name = strings.Join(args, " ")
+            }
+            return "Hello "+name, nil
+          })
+
+          // register a function for "read" command.
+          shell.Register("greet", func(args ...string) (string, error) {
+            //name := "Stranger"
+            //if len(args) > 0 {
+            //    name = strings.Join(args, " ")
+            //}
+
+            // read first memory address
+            serB(s)
+
+            return "Success", nil
+          })
+
+          // start shell
+          shell.Start()
     }
 
     s.Close()

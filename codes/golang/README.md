@@ -18,6 +18,7 @@ gvm install go1.6.2
 go get github.com/jochenvg/go-udev
 go get github.com/jkeiser/iter
 go get github.com/tarm/serial
+go get github.com/abiosoft/ishell
 go get golang.org/x/sys/unix
 apt-get install libudev-dev
 
