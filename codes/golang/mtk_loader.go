@@ -23,6 +23,8 @@ import (
     "github.com/abiosoft/ishell"
     // https://godoc.org/github.com/mikepb/go-serial
     goserial "github.com/mikepb/go-serial"
+
+    hktool "./hktool"
 )
 //import L "github.com/mikepb/go-serial/listports"
 
@@ -141,6 +143,21 @@ func shl(s *serial.Port, mcu string) {
             // read first memory address
             if s != nil {
                 serB(s)
+                return "Success", nil
+            } else {
+                return CLR_C+"Not connected to MCU"+CLR_N, nil
+            }
+          })
+
+          shell.Register("r", func(args ...string) (string, error) {
+            if s != nil {
+                if len(args) > 1 {
+                    hktool.Read(s, args[0], args[1])
+                } else {
+                if len(args) > 0 {
+                    hktool.Read(s, args[0])
+                }
+                }
                 return "Success", nil
             } else {
                 return CLR_C+"Not connected to MCU"+CLR_N, nil
