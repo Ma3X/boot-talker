@@ -1,0 +1,43 @@
+Fernly — операционная система для моих часов
+https://geektimes.ru/post/275142/
+
+Fernvale research OS
+https://github.com/xobs/fernly
+
+Fernly running on MT6261
+https://kosagi.com//forums/viewtopic.php?id=376
+https://github.com/isogashii/fernly
+  - forked https://github.com/jimparis/fernly
+     - forked https://github.com/xobs/fernly
+
+0x70000000  -  SRAM (StaticRAM)
+
+The 6261 only has 44k of static RAM
+
+0x70006000
+0x70009000
+
+See if this works for anyone else...
+https://github.com/isogashii/fernly/tree/fernly6261/
+That's the "fernly6261" branch in my fork of fernly from jimparis's fork.
+Coupla quick notes... I relocated Fernly down to 0x70000000, the base of static RAM. 
+The 6261 only has 44k of static RAM and there wasn't enough room to load it at 0x70006000 
+with all the features compiled in without it overwriting and crashing the first stage loader above it. 
+That meant redoing the stage 1 loader to use Fernly's serial routines, since the ROM's 
+USB routines use the low RAM area to store their buffers and program variables. 
+Fernly's serlal output code worked fine as-is. I re-did serial_getc() based on a pretty literal translation of the disassembled ROM code.
+The new loader is named "stage1.bin" and I set fernly-usb-loader to load it at 0x70009000. 
+I also edited usb-loader.S with the equivalent 6261 ROM entry points for reading, writing, 
+and flushing USB serial. That isn't used for Fernly but I used it a great deal while figuring out this stuff.
+There's also a ROM dumper payload included, called "dump-rom-usb.S" naturally. 
+Instructions for it are in the README, and I put a .bin file in the /build directory 
+so that if you've got a device and can compile fernly-usb-loader, you can run it and 
+get a copy of your ROM. (I.e., you won't need a cross-compile toolchain for that.)
+It looks like PSRAM is working. Without the scriptic_run() call, address 0 is the same as 0x10000000, 
+beginning with "SF_BOOT". After "enable_psram", I can poke address 0 and read back the value I put there. So that's cool.
+
+
+http://www.dr-lex.be/hardware/china_phone_flashing.html
+
+Grand MTK firmware dumpster
+https://www.kosagi.com/forums/viewtopic.php?id=160

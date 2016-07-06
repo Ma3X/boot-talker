@@ -1,1 +1,50 @@
-rasm2 -a arm -f test.S -B > test.bin
+-------------------------------------------------------------
+
+radare2 -n -e scr.color=true -e asm.syntax=intel -d /bin/ls
+r2 -c "=H" /bin/ls
+
+-------------------------------------------------------------
+
+#> rasm2 -a arm -f test.S -B > test.bin
+#> cat ./test.S
+nop
+add r1, r0
+
+#> rasm2 -a arm -d 0000a0e1
+mov r0, r0
+#> rasm2 -a arm -d 001081e0
+add r1, r1, r0
+
+------------------------------------------
+
+f004e51f 0000e51f
+
+#> rasm2 -a arm -d 00001fe5
+ldr r0, [pc, -0]
+
+#> rasm2 -a arm -d 04f01fe5
+ldr pc, [pc, -4]
+
+------------------------------------------
+
+https://github.com/radare/radare2
+cd ./radare2
+./configure --prefix=/usr
+make install
+cd..
+
+https://github.com/radare/valabind
+cd ./valabind
+./configure --prefix=/usr
+make install
+cd ..
+
+#apt-get install valabind
+
+apt-get install swig
+pip install r2pipe
+r2pm init
+r2pm update
+r2pm install python
+
+------------------------------------------

@@ -1,3 +1,5 @@
+http://rada.re/r/cmp.html
+
 apt-get install pyew python-radare python-psyco bokken graphviz
 
 https://n0where.net/open-source-reverse-engineering-bokken/
@@ -19,3 +21,6 @@ https://retdec.com/api/
 https://www.onlinedisassembler.com/odaweb/
 ? https://www.hopperapp.com/
 https://pypi.python.org/pypi/qtarmsim
+
+http://dukebarman.pro/na-radare-kak-na-ladoni/
+https://habrahabr.ru/post/274617/
