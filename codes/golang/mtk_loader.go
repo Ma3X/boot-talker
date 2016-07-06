@@ -14,6 +14,7 @@ import (
     "sync"
     "time"
     "strings"
+    "strconv"
     "log"
     "encoding/hex"
     "path/filepath"
@@ -38,6 +39,8 @@ const CLR_C = "\x1b[36;1m"
 const CLR_W = "\x1b[37;1m"
 const CLR_N = "\x1b[0m"
 
+var   isdbg = "false"
+
 func if_err() {
     fmt.Println("error open serial port: ")
     fmt.Println("for full reset serial device you must reload drivers:")
@@ -54,13 +57,13 @@ func serW(s *serial.Port, ss string) {
     if e != nil {
         log.Fatal(e)
     }
-    fmt.Printf("%x "+CLR_R+"->"+CLR_N, hh)
+    if isdbg == "true" { fmt.Printf("%x "+CLR_R+"->"+CLR_N, hh) }
     //n, err := s.Write([]byte("\x0a"))
     n, err := s.Write(hh)
     if err != nil {
         log.Fatal(err)
     }
-    fmt.Println(" count", n)
+    if isdbg == "true" { fmt.Println(" count", n) }
 }
 
 func serR(s *serial.Port) (ss string, e error) {
@@ -71,7 +74,7 @@ func serR(s *serial.Port) (ss string, e error) {
     }
     //log.Printf("%q", buf[:n])
     //fmt.Printf("<- %x", buf[:n])
-    fmt.Println(CLR_G+"<-"+CLR_N, hex.EncodeToString(buf[:n]))
+    if isdbg == "true" { fmt.Println(CLR_G+"<-"+CLR_N, hex.EncodeToString(buf[:n])) }
     //fmt.Println("<-", fmt.Sprintf("%x", buf[:n]))
 
     return hex.EncodeToString(buf[:n]), err
@@ -110,6 +113,36 @@ func serB(s *serial.Port) {
         serW(s, "0000001C"); serR(s) // A0010000
         serW(s, "00000004"); serR(s) // +
                              serR(s)
+}
+
+func serA2ReadWords(s *serial.Port, offset string, words string) (r string, e error) {
+      offset = strings.ToLower(offset)
+      words  = strings.ToLower(words)
+      serW(s, "a2");
+                 res, err := serR(s) // a2     echo
+      if err != nil    { log.Fatal("a2: "+err.Error());                         return res, err }
+      if res != "a2"   { log.Fatal("not a2");                                   return res, err }
+      serW(s, offset);
+                 res, err  = serR(s) // offset echo
+      if err != nil    { log.Fatal("offset "+offset+": "+err.Error());          return res, err }
+      if res != offset { log.Fatal("not offset "+offset);                       return res, err }
+      serW(s, words);
+                 res, err  = serR(s) // words  echo (+ data) or...
+      if err  != nil   { log.Fatal("words "+words+": "+err.Error());            return res, err }
+      // res[4:]  - спереди убрать 4 символа
+      // res[:4]  - сзади взять 4 символа
+      // res[0:8] - спереди взять 8 символов
+      resA := res[0:8]
+      resZ := res[8:]
+      wrdI, err := strconv.Atoi(words)
+      if err  != nil   { log.Fatal("words "+words+" in convert: "+err.Error()); return res, err }
+      if resA != words { log.Fatal("not words "+words);                         return res, err }
+      for len(resZ) < /*word-hex-str*/2 * /*bytes*/2 * wrdI {
+                 res, err  = serR(s) // + data
+                 if err != nil { log.Fatal("read data in resZ: "+err.Error());  return resZ, err }
+                 resZ += res
+      }
+      return resZ, err
 }
 
 func shl(s *serial.Port, mcu string) {
@@ -179,7 +212,7 @@ func ser(ss string){
 
     //time.Sleep(time.Second/2)
 
-    // swap-char-gaming ("dress code")
+    // XOR-ed swap-char-gaming ("dress code")
     serW(s, "a0");       serR(s) // 5f
     serW(s, "0a");       serR(s) // f5
     serW(s, "50");       serR(s) // af
@@ -190,50 +223,29 @@ func ser(ss string){
     // ckeck N1: in 0x80010008
     if mcu == "unknown" {
       fmt.Println("check software register in address:", "0x80010008")
-      serW(s, "a2");       serR(s) // a2
-      serW(s, "80010008"); serR(s) // A0000004
-      serW(s, "00000001"); serR(s) // +
-               res, _   := serR(s)
+      res, _ := serA2ReadWords(s, "80010008", "00000001")
       switch res {
       case "6235":
         mcu = "mt6235"
         fmt.Println("mcu is:"+CLR_Y, mcu, CLR_N)
-
-        serW(s, "a2");       serR(s) // a2
-        serW(s, "80010000"); serR(s) // 80010000
-        serW(s, "00000001"); serR(s) // +
-        fmt.Println("5:",mcu)
-                             serR(s)
-        fmt.Println("6:",mcu)
+        serA2ReadWords(s, "80010000", "00000001")
       case "6253":
         mcu = "mt6253"
         fmt.Println("mcu is:"+CLR_Y, mcu, CLR_N)
-
-        serW(s, "a2");       serR(s) // a2
-        serW(s, "80010000"); serR(s) // 80010000
-        serW(s, "00000001"); serR(s) // +
-                             serR(s)
+        serA2ReadWords(s, "80010000", "00000001")
       default:
         fmt.Println("check not found in 0x80010008")
       }
     }
-
     // ckeck N2: in 0xA0000008
     if mcu == "unknown" {
       fmt.Println("check software register in address:", "0xA0000008")
-      serW(s, "a2");       serR(s) // a2
-      serW(s, "A0000008"); serR(s) // A0000008
-      serW(s, "00000001"); serR(s) // +
-               res, _   := serR(s)
+      res, _ := serA2ReadWords(s, "A0000008", "00000001")
       switch res {
       case "6261":
         mcu = "mt6261x"
         fmt.Println("mcu is:"+CLR_Y, mcu, CLR_N)
-
-        serW(s, "a2");       serR(s) // a2
-        serW(s, "A0000000"); serR(s) // A0000000
-        serW(s, "00000001"); serR(s) // +
-                             serR(s)
+        serA2ReadWords(s, "A0000000", "00000001")
       default:
         fmt.Println("check not found in 0xA0000008")
       }
@@ -282,7 +294,7 @@ func usb_load() {
     var wg sync.WaitGroup
     wg.Add(3)
     go func() {
-        fmt.Println("Started listening on channel")
+        if isdbg == "true" { fmt.Println("Started listening on channel") }
         for d := range ch {
                 //fmt.Println("Event:", 
                 //            "\nSyspath:",  d.Syspath(),
@@ -300,22 +312,22 @@ func usb_load() {
                   }
                 }
         }
-        fmt.Println("Channel closed")
+        if isdbg == "true" { fmt.Println("Channel closed") }
         wg.Done()
     }()
     go func() {
-        fmt.Println("Starting timer to update filter")
+        if isdbg == "true" { fmt.Println("Starting timer to update filter") }
         <-time.After(20 * time.Second)
-        fmt.Println("Removing filter")
+        if isdbg == "true" { fmt.Println("Removing filter") }
         m.FilterRemove()
-        fmt.Println("Updating filter")
+        if isdbg == "true" { fmt.Println("Updating filter") }
         m.FilterUpdate()
         wg.Done()
     }()
     go func() {
-        fmt.Println("Starting timer to signal done")
+        if isdbg == "true" { fmt.Println("Starting timer to signal done") }
         <-time.After(20 * time.Second)
-        fmt.Println("Signalling done")
+        if isdbg == "true" { fmt.Println("Signalling done") }
         close(done)
         wg.Done()
     }()
@@ -541,7 +553,19 @@ func view_help() {
     fmt.Println("")
 }
 
+func stringInSlice(a string, list []string) bool {
+    for _, b := range list {
+        if b == a {
+            return true
+        }
+    }
+    return false
+}
+
 func main() {
+    if stringInSlice("debug", os.Args) {
+              isdbg = "true"
+    }
 
     if len(os.Args) > 1 {
         switch os.Args[1] {
@@ -563,6 +587,8 @@ func main() {
               } else {
                   serList()
               }
+          case "debug":
+              isdbg = "true"
           case "help":
               view_help()
           default:
