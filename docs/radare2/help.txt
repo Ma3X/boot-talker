@@ -1,0 +1,21 @@
+apt-get install pyew python-radare python-psyco bokken graphviz
+
+https://n0where.net/open-source-reverse-engineering-bokken/
+https://xerocrypt.wordpress.com/tag/disassemble/
+http://ingumadev.blogspot.ru/2015/05/welcome-bokken-17.html
+
+http://www.bokken.re/docu.html
+http://radare.org/r/
+http://www.capstone-engine.org/showcase.html
+http://jbremer.org/darm/
+https://github.com/gdabah/distorm
+https://github.com/joelpx/plasma
+https://github.com/aquynh/capstone
+
+https://github.com/radare/bokken
+https://github.com/radare/radare2
+
+https://retdec.com/api/
+https://www.onlinedisassembler.com/odaweb/
+? https://www.hopperapp.com/
+https://pypi.python.org/pypi/qtarmsim
