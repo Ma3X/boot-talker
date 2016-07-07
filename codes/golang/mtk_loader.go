@@ -11,6 +11,7 @@ package main
 import (
     "fmt"
     "os"
+    "os/exec"
     "sync"
     "time"
     "strings"
@@ -40,6 +41,7 @@ const CLR_W = "\x1b[37;1m"
 const CLR_N = "\x1b[0m"
 
 var   isdbg = "false"
+var   isext = "false"
 
 func if_err() {
     fmt.Println("error open serial port: ")
@@ -262,6 +264,11 @@ func ser(ss string){
         watchdog = "off"
 
       case "mt6261x":
+        serW(s, "d2");       serR(s) // a1
+        serW(s, "a0030000"); serR(s) // a0030000
+        //time.Sleep(time.Second/32)
+        serW(s, "00000001"); serR(s) // 00000001
+        serW(s, "2200");     serR(s) // 2200
         watchdog = "off"
 
       default:
@@ -273,6 +280,21 @@ func ser(ss string){
     }
 
     s.Close()
+}
+
+func exe_cmd(cmd string, wg *sync.WaitGroup) {
+  fmt.Println("command is ",cmd)
+  // splitting head => g++ parts => rest of the command
+  parts := strings.Fields(cmd)
+  head := parts[0]
+  parts = parts[1:len(parts)]
+
+  out, err := exec.Command(head,parts...).Output()
+  if err != nil {
+    fmt.Printf("%s", err)
+  }
+  fmt.Printf("%s", out)
+  wg.Done() // Need to signal to waitgroup that this goroutine is done
 }
 
 func usb_load() {
@@ -308,7 +330,30 @@ func usb_load() {
                     ss := "/dev/" + s[len(s)-1]
                     //fmt.Println(ss)
                     //fmt.Println("")
-                    ser(ss)
+                    if isext == "false" {
+                        ser(ss)
+                    } else {
+                        //wg2 := new(sync.WaitGroup)
+                        //wg2.Add(1)
+                        //go exe_cmd("./fernly-usb-loader "+ss+" ./dump-rom-usb.bin", wg2)
+                        //wg2.Wait()
+
+                        fmt.Println("./fernly-usb-loader -s "+ss+" ./stage1.bin ./firmware.bin")
+                        cmd := exec.Command("./fernly-usb-loader", ss, "./stage1.bin", "./firmware.bin")
+                        cmd.Stdout = os.Stdout
+                        cmd.Stderr = os.Stderr
+                        if err := cmd.Run(); err != nil {
+                            log.Fatal(err)
+                        }
+
+                        fmt.Println("./fernly-usb-loader "+ss+" ./dump-rom-usb.bin")
+                        cmd  = exec.Command("./fernly-usb-loader", ss, "./dump-rom-usb.bin")
+                        cmd.Stdout = os.Stdout
+                        cmd.Stderr = os.Stderr
+                        if err  := cmd.Run(); err != nil {
+                            log.Fatal(err)
+                        }
+                    }
                   }
                 }
         }
@@ -566,6 +611,9 @@ func main() {
     if stringInSlice("debug", os.Args) {
               isdbg = "true"
     }
+    if stringInSlice("ext", os.Args) {
+              isext = "true"
+    }
 
     if len(os.Args) > 1 {
         switch os.Args[1] {
@@ -589,6 +637,8 @@ func main() {
               }
           case "debug":
               isdbg = "true"
+          case "ext":
+              isext = "true"
           case "help":
               view_help()
           default:
