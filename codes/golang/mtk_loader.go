@@ -41,7 +41,9 @@ const CLR_W = "\x1b[37;1m"
 const CLR_N = "\x1b[0m"
 
 var   isdbg = "false"
+var   isdbg2= "false"
 var   isext = "false"
+var   isasn = "false"
 
 func if_err() {
     fmt.Println("error open serial port: ")
@@ -199,6 +201,21 @@ func shl(s *serial.Port, mcu string) {
             }
           })
 
+          shell.Register("w", func(args ...string) (string, error) {
+            if s != nil {
+                if len(args) > 1 {
+                    hktool.Write(s, args[0], args[1])
+                } else {
+                if len(args) > 0 {
+                    hktool.Write(s, args[0])
+                }
+                }
+                return "Success", nil
+            } else {
+                return CLR_C+"Not connected to MCU"+CLR_N, nil
+            }
+          })
+
           // start shell
           shell.Start()
 }
@@ -269,6 +286,13 @@ func ser(ss string){
         //time.Sleep(time.Second/32)
         serW(s, "00000001"); serR(s) // 00000001
         serW(s, "2200");     serR(s) // 2200
+                             serR(s)
+        serW(s, "d2");       serR(s) // a1
+        serW(s, "a0030004"); serR(s) // a0030000
+        //time.Sleep(time.Second/32)
+        serW(s, "00000001"); serR(s) // 00000001
+        serW(s, "2200");     serR(s) // 2200
+                             serR(s)
         watchdog = "off"
 
       default:
@@ -338,8 +362,8 @@ func usb_load() {
                         //go exe_cmd("./fernly-usb-loader "+ss+" ./dump-rom-usb.bin", wg2)
                         //wg2.Wait()
 
-                        fmt.Println("./fernly-usb-loader -s "+ss+" ./stage1.bin ./firmware.bin")
-                        cmd := exec.Command("./fernly-usb-loader", ss, "./stage1.bin", "./firmware.bin")
+                        fmt.Println("./fernly-usb-loader "+ss+" ./usb-loader.bin ./firmware.bin")
+                        cmd := exec.Command("./fernly-usb-loader", ss, "./usb-loader.bin", "./firmware.bin")
                         cmd.Stdout = os.Stdout
                         cmd.Stderr = os.Stderr
                         if err := cmd.Run(); err != nil {
@@ -357,22 +381,22 @@ func usb_load() {
                   }
                 }
         }
-        if isdbg == "true" { fmt.Println("Channel closed") }
+        if isdbg2 == "true" { fmt.Println("Channel closed") }
         wg.Done()
     }()
     go func() {
-        if isdbg == "true" { fmt.Println("Starting timer to update filter") }
+        if isdbg2 == "true" { fmt.Println("Starting timer to update filter") }
         <-time.After(20 * time.Second)
-        if isdbg == "true" { fmt.Println("Removing filter") }
+        if isdbg2 == "true" { fmt.Println("Removing filter") }
         m.FilterRemove()
-        if isdbg == "true" { fmt.Println("Updating filter") }
+        if isdbg2 == "true" { fmt.Println("Updating filter") }
         m.FilterUpdate()
         wg.Done()
     }()
     go func() {
-        if isdbg == "true" { fmt.Println("Starting timer to signal done") }
+        if isdbg2 == "true" { fmt.Println("Starting timer to signal done") }
         <-time.After(20 * time.Second)
-        if isdbg == "true" { fmt.Println("Signalling done") }
+        if isdbg2 == "true" { fmt.Println("Signalling done") }
         close(done)
         wg.Done()
     }()
@@ -610,9 +634,21 @@ func stringInSlice(a string, list []string) bool {
 func main() {
     if stringInSlice("debug", os.Args) {
               isdbg = "true"
+              hktool.IsDbg = isdbg
+    }
+    if stringInSlice("debug2", os.Args) {
+              isdbg = "true"
+              hktool.IsDbg = isdbg
+              isdbg2 = "true"
+              hktool.IsDbg2 = isdbg2
     }
     if stringInSlice("ext", os.Args) {
               isext = "true"
+              hktool.IsExt = isext
+    }
+    if stringInSlice("async", os.Args) {
+              isasn = "true"
+              hktool.IsAsn = isasn
     }
 
     if len(os.Args) > 1 {
